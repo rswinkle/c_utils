@@ -1,0 +1,10 @@
+#ignore ~ files
+*~
+*.swp
+Images/*
+Models/*
+CMakeFiles/*
+CMakeCache.txt
+framework
+Makefile
+cmake_install.cmake
