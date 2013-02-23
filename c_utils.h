@@ -4,6 +4,9 @@
 #include "basic_types.h"
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct
 {
@@ -20,5 +23,8 @@ char* freadstring(FILE* input, char delim, size_t max_len);
 
 c_array slice_c_array(c_array array, int start, int end);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

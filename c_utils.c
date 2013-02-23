@@ -81,7 +81,7 @@ int file_read(FILE* file, c_array* out)
 }
 
 
-char* freadstring(FILE* input, char delim, size_t max_len);
+char* freadstring(FILE* input, char delim, size_t max_len)
 {
 	char* string = malloc(max_len+1);
 	char temp;
