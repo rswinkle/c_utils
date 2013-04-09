@@ -10,11 +10,11 @@ solution "CUtils"
       location "build"
       kind "ConsoleApp"
       language "C"
-      files { "./src/main.c" }
- --     excludes { "c_utils.*" }
- --     libdirs { "/usr/lib64/" }
-      includedirs { "./inc" }
-      links { "c_utils" } 
+      files { "*.c" }
+ --   excludes { "c_utils.*" }
+ --   libdirs { "/usr/lib64/" }
+ --   includedirs { "./inc" }
+ --   links { "c_utils" } 
 	  targetdir "build"
   
       configuration "Debug"
@@ -26,8 +26,8 @@ solution "CUtils"
          flags { "Optimize" }
  
       configuration { "linux", "gmake" }
-         buildoptions { "-ansi", "-pedantic-errors }
-
+         buildoptions { "-std=c99", "-pedantic" }
+--[[
    project "c_utils"
       kind "SharedLib"
       language "C"
@@ -42,3 +42,4 @@ solution "CUtils"
       files { "./src/**.c" }
       excludes { "./src/main.c" }
       includedirs { "./inc" }
+      ]]
