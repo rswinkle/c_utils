@@ -45,7 +45,7 @@ void map(c_array* array, void (*func)(byte*));
 
 
 void boyermoore_search(c_array haystack_array, c_array needle_array);
-
+void basic_search(c_array haystack, c_array needle);
 
 /*
  * make string utility functions

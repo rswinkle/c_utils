@@ -373,8 +373,10 @@ void prepare_goodsuffix_heuristic(const byte *str, size_t str_len, int result[])
 	it's algorithm is slightly different */
 	i = 1;
 	result[str_len] = 1;
-	while (prefix_reversed[i++])
+	while (prefix_reversed[i++]) {
+		printf("i= %lu\n", i);
 		result[str_len]++;
+	}
 	
 	for (i=1; i<str_len; i++) {
 		/*max = 0; */
@@ -422,6 +424,8 @@ void boyermoore_search(c_array haystack_array, c_array needle_array)
 	byte* haystack = haystack_array.data;
 	byte* needle = needle_array.data;
 
+	printf("needle length = %lu\n", needle_len);
+
 	/** Simple checks */
 	if(haystack_len == 0)
 		return;
@@ -430,6 +434,7 @@ void boyermoore_search(c_array haystack_array, c_array needle_array)
 	if(needle_len > haystack_len)
 		return;
 	
+	printf("boyer_moore search\n");
 	/** Initialize heuristics */
 	int badcharacter[ALPHABET_SIZE];
 	int goodsuffix[needle_len+1];
@@ -438,20 +443,34 @@ void boyermoore_search(c_array haystack_array, c_array needle_array)
 	prepare_goodsuffix_heuristic(needle, needle_len, goodsuffix);
  
 	/** Boyer-Moore search */
-	size_t s = 0;
+	size_t s = 0, j = 0;
 	while(s <= (haystack_len - needle_len))
 	{
-		size_t j = needle_len;
-		while(j > 0 && needle[j-1] == haystack[s+j-1])
-			j--;
- 
+		j = needle_len;
+		if (s > 6250 && s < 6260) {
+			while(j > 0 && needle[j-1] == haystack[s+j-1]) {
+				printf("%lu: %d %d\n",s+j-1, needle[j-1], haystack[s+j-1]);
+				j--;
+			}
+			printf("=%lu: %d %d\n", s+j-1,  needle[j-1], haystack[s+j-1]);
+				
+ 		} else {
+			while(j > 0 && needle[j-1] == haystack[s+j-1])
+				j--;
+		}
+
 		if(j > 0) {
-			int k = badcharacter[(size_t) haystack[s+j-1]];
+			int k = badcharacter[haystack[s+j-1]];
 			int m;
-			if(k < (int)j && (m = j-k-1) > goodsuffix[j])
-				s+= m;
-			else
-				s+= goodsuffix[j];
+			if(k < (int)j && (m = j-k-1) > goodsuffix[j]) {
+				s += m;
+				if (s > 6250 && s < 6260)
+					printf("adding m = %d\n", m);
+			} else {
+				s += goodsuffix[j];
+				if (s > 6250 && s < 6260)
+					printf("adding goodsuffix[%lu] = %d\n", j, goodsuffix[j]);
+			}
 		} else {
 			printf("Pattern found at %lu\n", s);
 			s += goodsuffix[0];
@@ -462,7 +481,19 @@ void boyermoore_search(c_array haystack_array, c_array needle_array)
 
 
 
-
+void basic_search(c_array haystack, c_array needle)
+{
+	byte* result = haystack.data;
+	byte* end = haystack.data + haystack.len*haystack.elem_size;
+	while(result = memchr(result, needle.data[0], end-result)) {
+		if (!memcmp(result, needle.data, needle.len*needle.elem_size)) {
+			printf("Pattern found at %lu\n", result-haystack.data);
+			result += needle.len*needle.elem_size;
+		} else {
+			++result;
+		}
+	}
+}
 
 
 

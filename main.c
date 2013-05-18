@@ -131,7 +131,7 @@ int main()
 		memcpy(&search_test.data[pos], search_str.data, NEEDLE_LEN);
 	}
 
-	pos = rand() % (HAYSTACK_LEN-NEEDLE_LEN);
+	pos = 6253;//rand() % (HAYSTACK_LEN-NEEDLE_LEN);
 	printf("pos %d = %d\n", i, pos);
 	int some_num = 100;
 	memcpy(&search_test.data[pos], &some_num, sizeof(int));
@@ -145,6 +145,10 @@ int main()
 	c_array search_int = init_c_array((byte*)&some_num, 1, sizeof(int));
 	boyermoore_search(search_test, search_str);	
 	boyermoore_search(search_test, search_int);	
+
+	printf("basic search:\n");
+	basic_search(search_test, search_str);	
+	basic_search(search_test, search_int);	
 
 	free(search_int.data);
 	free(search_test.data);
