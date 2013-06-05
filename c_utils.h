@@ -15,6 +15,11 @@ typedef struct c_array
 	size_t len;
 } c_array;
 
+#define SET_C_ARRAY(array, data_, elem_size_, len_) \
+	(array).data = (data_); \
+	(array).elem_size = (elem_size_); \
+	(array).len = (len_)
+
 c_array init_c_array(byte* data, size_t elem_size, size_t len);
 c_array copy_c_array(c_array src);
 
@@ -38,27 +43,29 @@ char* ltrim(char* str);
 char* rtrim(char* str);
 char* trim(char* str);
 
+
+
+int are_equal_char(byte* a, byte* b);
+int are_equal_uchar(byte* a, byte* b);
+int are_equal_short(byte* a, byte* b);
+int are_equal_ushort(byte* a, byte* b);
+int are_equal_int(byte* a, byte* b);
+int are_equal_uint(byte* a, byte* b);
+int are_equal_long(byte* a, byte* b);
+int are_equal_ulong(byte* a, byte* b);
+int are_equal_float(byte* a, byte* b);
+int are_equal_double(byte* a, byte* b);
+
+
 int any(c_array* array, int (*is_true)(byte*));
 int all(c_array* array, int (*is_true)(byte*));
+int is_any(c_array* array, byte* the_one, int (*are_equal)(byte*, byte*));
 
 void map(c_array* array, void (*func)(byte*));
 
 
 void boyermoore_search(c_array haystack_array, c_array needle_array);
 void basic_search(c_array haystack, c_array needle);
-
-/*
- * make string utility functions
- * split(char delim)
- * trim
- * etc
- * maybe also make versions that work on c_arrays/general types
- *
- * maybe copy/convert in my boyer-moore search function
- *
- *
- * also any(), all() and map()
- */
 
 
 

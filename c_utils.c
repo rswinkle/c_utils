@@ -242,7 +242,7 @@ c_array slice_c_array(c_array array, int start, int end)
 	
 int split(c_array* array, byte* delim, size_t delim_len, c_array* out)
 {
-	size_t pos = 0, i, j, max_len = 1000;
+	size_t pos = 0, max_len = 1000;
 	out->elem_size = sizeof(c_array);
 	out->len = 0;
 	byte* match;
@@ -254,7 +254,7 @@ int split(c_array* array, byte* delim, size_t delim_len, c_array* out)
 
 	results = (c_array*)out->data;
 
-	while(match = memchr(&array->data[pos], delim[0], array->len*array->elem_size - pos)) {
+	while (match = memchr(&array->data[pos], delim[0], array->len*array->elem_size - pos)) {
 		if (!memcmp(match, delim, delim_len)) {
 			results[out->len].data = &array->data[pos];
 			results[out->len].elem_size = 1;
@@ -342,10 +342,10 @@ void prepare_badcharacter_heuristic(const byte *str, size_t str_len, int result[
 {
 	size_t i;
 
-	for (i = 0; i < ALPHABET_SIZE; i++)
+	for (i = 0; i < ALPHABET_SIZE; ++i)
 		result[i] = -1;
  
-	for (i = 0; i < str_len; i++)
+	for (i = 0; i < str_len; ++i)
 		result[(size_t) str[i]] = i;
 }
 
@@ -359,7 +359,7 @@ void prepare_goodsuffix_heuristic(const byte *str, size_t str_len, int result[])
 	reversed = (byte*) malloc(str_len);  assert(reversed);
 
 	/* reverse string */
-	for (i=0; i<str_len; i++)
+	for (i=0; i<str_len; ++i)
 		reversed[i] = str[str_len-1-i];
 
 	//int prefix_normal[size];
@@ -378,10 +378,10 @@ void prepare_goodsuffix_heuristic(const byte *str, size_t str_len, int result[])
 		result[str_len]++;
 	}
 	
-	for (i=1; i<str_len; i++) {
+	for (i=1; i<str_len; ++i) {
 		/*max = 0; */
 		test = 0;
-		for (j=i; j<str_len-1; j++) {
+		for (j=i; j<str_len-1; ++j) {
 			/*if (!test && prefix_reversed[j] == i) */
 			
 			if (prefix_reversed[j] == i) {
@@ -444,8 +444,7 @@ void boyermoore_search(c_array haystack_array, c_array needle_array)
  
 	/** Boyer-Moore search */
 	size_t s = 0, j = 0;
-	while(s <= (haystack_len - needle_len))
-	{
+	while (s <= (haystack_len - needle_len)) {
 		j = needle_len;
 		if (s > 6250 && s < 6260) {
 			while(j > 0 && needle[j-1] == haystack[s+j-1]) {
@@ -459,10 +458,10 @@ void boyermoore_search(c_array haystack_array, c_array needle_array)
 				j--;
 		}
 
-		if(j > 0) {
+		if (j > 0) {
 			int k = badcharacter[haystack[s+j-1]];
 			int m;
-			if(k < (int)j && (m = j-k-1) > goodsuffix[j]) {
+			if (k < (int)j && (m = j-k-1) > goodsuffix[j]) {
 				s += m;
 				if (s > 6250 && s < 6260)
 					printf("adding m = %d\n", m);
@@ -497,10 +496,76 @@ void basic_search(c_array haystack, c_array needle)
 
 
 
+int are_equal_char(byte* a, byte* b)
+{
+	return *(char*)a == *(char*)b;
+}
+
+int are_equal_uchar(byte* a, byte* b)
+{
+	return *(unsigned char*)a == *(unsigned char*)b;
+}
+
+int are_equal_short(byte* a, byte* b)
+{
+	return *(short*)a == *(short*)b;
+}
+
+int are_equal_ushort(byte* a, byte* b)
+{
+	return *(unsigned short*)a == *(unsigned short*)b;
+}
+
+int are_equal_int(byte* a, byte* b)
+{
+	return *(int*)a == *(int*)b;
+}
+
+int are_equal_uint(byte* a, byte* b)
+{
+	return *(unsigned int*)a == *(unsigned int*)b;
+}
+
+int are_equal_long(byte* a, byte* b)
+{
+	return *(long*)a == *(long*)b;
+}
+
+int are_equal_ulong(byte* a, byte* b)
+{
+	return *(unsigned long*)a == *(unsigned long*)b;
+}
+
+int are_equal_float(byte* a, byte* b)
+{
+	return *(float*)a == *(float*)b;
+}
+int are_equal_double(byte* a, byte* b)
+{
+	return *(double*)a == *(double*)b;
+}
+
+
+//int is_any_array
+
+
+int is_any(c_array* array, byte* the_one, int (*are_equal)(byte*, byte*))
+{
+	size_t i;
+	for (i=0; i<array->len; ++i) {
+		if (are_equal(the_one, &array->data[i*array->elem_size]))
+			return 1;
+	}
+	return 0;
+}
+
+
+
+
 int any(c_array* array, int (*is_true)(byte*))
 {
 	size_t i;
-	for (i=0; i<array->len; i++) {
+	for (i=0; i<array->len; ++i) {
 		if (is_true(&array->data[i*array->elem_size])) {
 			return 1;
 		}
@@ -512,7 +577,7 @@ int any(c_array* array, int (*is_true)(byte*))
 int all(c_array* array, int (*is_true)(byte*))
 {
 	size_t i;
-	for (i=0; i<array->len; i++) {
+	for (i=0; i<array->len; ++i) {
 		if (!is_true(&array->data[i*array->elem_size])) {
 			return 0;
 		}
@@ -524,7 +589,7 @@ int all(c_array* array, int (*is_true)(byte*))
 void map(c_array* array, void (*func)(byte*))
 {
 	size_t i;
-	for (i=0; i<array->len; i++) {
+	for (i=0; i<array->len; ++i) {
 		func(&array->data[i*array->elem_size]);
 	}
 }

@@ -155,9 +155,25 @@ int main()
 	free(search_str.data);
 
 
+	double test_double_array[100];
+	int test_int_array[100];
+
+	for (int i=0; i<100; ++i) {
+		test_double_array[i] = rand() / (rand()*1.0f);
+		test_int_array[i] = rand();
+	}
+
+	int to_find_int = test_int_array[rand()%100];
+	double to_find_double = test_double_array[rand()%100];
+	c_array int_c_array;
+	c_array double_c_array;
 
 
+	SET_C_ARRAY(int_c_array, (byte*)test_int_array, sizeof(int), 100);
+	SET_C_ARRAY(double_c_array, (byte*)test_double_array, sizeof(double), 100);
 
+	printf("int is_any = %d\n", is_any(&int_c_array, (byte*)&to_find_int, are_equal_int));
+	printf("double is_any = %d\n", is_any(&double_c_array, (byte*)&to_find_double, are_equal_double));
 
 
 
