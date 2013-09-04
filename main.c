@@ -44,14 +44,14 @@ int main()
 	char* trim_test = mystrdup(test_strs[2]);
 
 	printf("\"%s\"\n", trim_test);
-	printf("\"%s\"\n", ltrim(trim_test));	
-	printf("\"%s\"\n", rtrim(trim_test));	
+	printf("\"%s\"\n", ltrim(trim_test));
+	printf("\"%s\"\n", rtrim(trim_test));
 	free(trim_test);
 	trim_test = mystrdup(test_strs[2]);
 	printf("\"%s\"\n\n\n", trim(trim_test));
 	free(trim_test);
 
-	
+
 	c_array test_map = init_c_array((byte*)test_strs[1], 1, strlen(test_strs[1]));
 	printf("\"%s\"\n", (char*)test_map.data);
 	map(&test_map, mytoupper);
@@ -135,7 +135,7 @@ int main()
 	printf("pos %d = %d\n", i, pos);
 	int some_num = 100;
 	memcpy(&search_test.data[pos], &some_num, sizeof(int));
-	
+
 /*
 	for (i=0; i<HAYSTACK_LEN; ++i) {
 		printf("%d ", search_test.data[i]);
@@ -143,12 +143,12 @@ int main()
 	printf("\n");
 */
 	c_array search_int = init_c_array((byte*)&some_num, 1, sizeof(int));
-	boyermoore_search(search_test, search_str);	
-	boyermoore_search(search_test, search_int);	
+	boyermoore_search(search_test, search_str);
+	boyermoore_search(search_test, search_int);
 
 	printf("basic search:\n");
-	basic_search(search_test, search_str);	
-	basic_search(search_test, search_int);	
+//	basic_search(search_test, search_str);
+	basic_search(search_test, search_int);
 
 	free(search_int.data);
 	free(search_test.data);
@@ -174,7 +174,6 @@ int main()
 
 	printf("int is_any = %d\n", is_any(&int_c_array, (byte*)&to_find_int, are_equal_int));
 	printf("double is_any = %d\n", is_any(&double_c_array, (byte*)&to_find_double, are_equal_double));
-
 
 
 
