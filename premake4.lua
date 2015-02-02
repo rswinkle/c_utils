@@ -10,7 +10,15 @@ solution "CUtils"
 		location "build"
 		kind "ConsoleApp"
 		language "C"
-		files { "*.c" }
+		files
+		{
+			"main.c",
+			"c_utils.c",
+			"c_utils.h",
+			"rsw_cstr.c",
+			"rsw_cstr.h",
+			"basic_types.h"
+		}
  --   excludes { "c_utils.*" }
  --   libdirs { "/usr/lib64/" }
  --   includedirs { "./inc" }

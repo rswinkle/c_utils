@@ -382,7 +382,7 @@ char* readstring(c_array* input, char delim, size_t max_len)
 
 
 
-c_array slice_c_array(c_array array, int start, int end)
+c_array slice_c_array(c_array array, long start, long end)
 {
 	c_array a = { NULL, array.elem_size, 0 };
 	int len;
@@ -553,7 +553,7 @@ char* trim(char* str)
 }
 
 
-long find(c_array haystack, c_array needle)
+size_t find(c_array haystack, c_array needle)
 {
 	byte* result = haystack.data;
 	byte* end = haystack.data + haystack.len*haystack.elem_size;

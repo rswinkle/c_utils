@@ -61,7 +61,7 @@ do { \
 
 char* read_string(FILE* file, const char* skip_chars, int delim, size_t max_len);
 
-c_array slice_c_array(c_array array, int start, int end);
+c_array slice_c_array(c_array array, long start, long end);
 
 
 int split(c_array* in, byte* delim, size_t delim_len, c_array* out);
@@ -109,7 +109,7 @@ int is_any(c_array* array, const void* the_one, int (*are_equal)(const void*, co
 void map(c_array* array, void (*func)(const void*));
 
 
-long find(c_array haystack, c_array needle);
+size_t find(c_array haystack, c_array needle);
 
 
 #define INT_MAX_LEN sizeof(int)*CHAR_BIT

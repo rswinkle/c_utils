@@ -5,6 +5,11 @@
 #include <time.h>
 #include <ctype.h>
 
+#include <string>
+#include <iostream>
+
+using namespace std;
+
 const char* test_strs[] =
 { "Hello World!",
   "The quick brown fox jumped over the lazy dog.",
@@ -176,7 +181,16 @@ int main()
 	printf("double is_any = %d\n", is_any(&double_c_array, (byte*)&to_find_double, are_equal_double));
 
 
+	printf("size_type is %d bytes\n", sizeof(string::size_type));
 
+	string s = "They say he carved it himself...from a BIGGER spoon";
+	cout << s[0] << " " << s[32] << " " << s[33] << "\n";
+	string s2 = "find your soul-mate, Homer.";
+	cout << s.size() << "\n";
+	s.replace( 32, s2.length()+20, s2 );
+	cout << s.size() << "\n";
+	cout << s[31] << " " << s[32] << " " << s[33] << "\n";
+	cout << s << endl;
 
 	return 0;
 }
