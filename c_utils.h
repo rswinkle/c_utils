@@ -47,7 +47,7 @@ int readline_into_str(c_array* input, char* str, size_t len);
 char* readline(c_array* input);
 char* readstring(c_array* input, char delim, size_t max_len);
 
-int read_char(FILE* input, char* skip_chars, int complement, int clear_line);
+int read_char(FILE* input, const char* skip_chars, int complement, int clear_line);
 
 /* define GET_STRING macro */
 #define READ_STRING(STR, CHAR) \
@@ -59,7 +59,7 @@ do { \
 	} while (!STR); \
 } while(0)
 
-char* read_string(FILE* file, char* skip_chars, int delim, size_t max_len);
+char* read_string(FILE* file, const char* skip_chars, int delim, size_t max_len);
 
 c_array slice_c_array(c_array array, int start, int end);
 

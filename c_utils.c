@@ -414,7 +414,7 @@ c_array slice_c_array(c_array array, int start, int end)
 }
 
 /* TODO make skip_chars byte* or u8*? */
-int read_char(FILE* input, char* skip_chars, int complement, int clear_line)
+int read_char(FILE* input, const char* skip_chars, int complement, int clear_line)
 {
 	int c, ret;
 	byte tmp;
@@ -437,7 +437,7 @@ int read_char(FILE* input, char* skip_chars, int complement, int clear_line)
 	return ret;
 }
 
-char* read_string(FILE* file, char* skip_chars, int delim, size_t max_len)
+char* read_string(FILE* file, const char* skip_chars, int delim, size_t max_len)
 {
 	int tmp;
 	byte tmp2;
@@ -891,5 +891,6 @@ double rand_double(double min, double max)
 {
 	return ((double)rand()/(double)(RAND_MAX-1))*(max-min) + min;
 }
+
 
 

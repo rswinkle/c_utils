@@ -419,8 +419,9 @@ int read_char(FILE* input, const char* skip_chars, int complement, int clear_lin
 	int c, ret;
 	byte tmp;
 	c_array skip;
+	const char* tmp_skip = (skip_chars) ? skip_chars : "";
 
-	SET_C_ARRAY(skip, (byte*)skip_chars, 1, (skip_chars ? strlen(skip_chars) : 0));
+	SET_C_ARRAY(skip, (byte*)skip_chars, 1, strlen(tmp_skip));
 
 	do {
 		ret = getc(input);
@@ -442,8 +443,9 @@ char* read_string(FILE* file, const char* skip_chars, int delim, size_t max_len)
 	byte tmp2;
 	char* str = NULL;
 	c_array skip;
+	const char* tmp_skip = (skip_chars) ? skip_chars : "";
 
-	SET_C_ARRAY(skip, (byte*)skip_chars, 1, (skip_chars ? strlen(skip_chars) : 0));
+	SET_C_ARRAY(skip, (byte*)skip_chars, 1, strlen(tmp_skip));
 
 	do {
 		tmp = getc(file);
