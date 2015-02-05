@@ -2,6 +2,7 @@
 #define RSW_CSTR_H
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,8 +25,8 @@ extern size_t CSTR_ST_SZ;
 
 int init_cstr(rsw_cstr* str);
 int init_cstr_cap(rsw_cstr* str, size_t capacity);
-int init_cstr_sz(rsw_cstr* str, size_t size, char val);
-int init_cstr_sz_cap(rsw_cstr* str, size_t size, char val, size_t capacity);
+int init_cstr_sz(rsw_cstr* str, size_t size, int val);
+int init_cstr_sz_cap(rsw_cstr* str, size_t size, int val, size_t capacity);
 int init_cstr_str(rsw_cstr* str, char* start, size_t num);
 
 //rsw_cstr* vec_char_heap(size_t size, size_t capacity);
@@ -39,8 +40,11 @@ char cstr_pop(rsw_cstr* str);
 int cstr_extend(rsw_cstr* str, size_t num, char a);
 int cstr_insert(rsw_cstr* str, size_t i, char a);
 
-int cstr_insert_str(rsw_cstr* str, size_t i, char* a, size_t num);
+int cstr_insert_str(rsw_cstr* str, size_t i, char* a, size_t len);
 int cstr_insert_cstr(rsw_cstr* str, size_t i, rsw_cstr* a_str);
+
+int cstr_concatenate(rsw_cstr* str, char* a, size_t len);
+int cstr_concatenate_cstr(rsw_cstr* str, rsw_cstr* a_str);
 
 void cstr_erase(rsw_cstr* str, size_t start, size_t end);
 
@@ -54,7 +58,7 @@ void cstr_clear(rsw_cstr* str);
 void free_cstr_heap(void* str);
 void free_cstr(void* str);
 
-int cstr_set_str(rsw_cstr* str, char* a, size_t num);
+int cstr_set_str(rsw_cstr* str, char* a, size_t len);
 
 rsw_cstr* cstr_ltrim(rsw_cstr* str);
 rsw_cstr* cstr_rtrim(rsw_cstr* str);
@@ -70,7 +74,21 @@ int cstr_replace(rsw_cstr* str, size_t index, size_t num, rsw_cstr* str2);
 int cstr_split(rsw_cstr* str, rsw_cstr* delim, rsw_cstr** results, size_t* num_results);
 
 
+int file_open_read_cstr(const char* filename, rsw_cstr* out);
+int file_read_cstr(FILE* file, rsw_cstr* out);
 
+int file_open_read_new_cstr(const char* filename, rsw_cstr* str);
+int file_read_new_cstr(FILE* file, rsw_cstr* str);
+
+int file_open_write_cstr(const char* filename, rsw_cstr* out);
+int file_write_cstr(FILE* file, rsw_cstr* out);
+int file_open_readlines_cstr(const char* filename, rsw_cstr** lines, size_t* num_results);
+
+int freadstring_into_cstr(FILE* input, int delim, rsw_cstr* str);
+int freadline_into_cstr(FILE* input, rsw_cstr* str);
+
+int freadstring_into_new_cstr(FILE* input, int delim, rsw_cstr* str);
+int freadline_into_new_cstr(FILE* input, rsw_cstr* str);
 
 
 #ifdef __cplusplus

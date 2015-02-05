@@ -202,7 +202,7 @@ int freadstring_into_str(FILE* input, int delim, char* str, size_t len)
 		temp = getc(input);
 
 		if (temp == EOF || temp == delim) {
-			if (!i && temp == EOF) {
+			if (!i && temp != delim) {
 				return 0;
 			}
 			break;

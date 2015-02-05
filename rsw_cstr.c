@@ -45,7 +45,7 @@ int init_cstr_cap(rsw_cstr* str, size_t capacity)
 	return 1;
 }
 
-int init_cstr_sz(rsw_cstr* str, size_t size, char val)
+int init_cstr_sz(rsw_cstr* str, size_t size, int val)
 {
 	str->size = size;
 	str->capacity = size + CSTR_ST_SZ;
@@ -56,14 +56,13 @@ int init_cstr_sz(rsw_cstr* str, size_t size, char val)
 		return 0;
 	}
 
-	for (int i=0; i<size; ++i)
-		str->a[i] = val;
+	memset(str->a, val, size);
 	str->a[size] = 0;
 
 	return 1;
 }
 
-int init_cstr_sz_cap(rsw_cstr* str, size_t size, char val, size_t capacity)
+int init_cstr_sz_cap(rsw_cstr* str, size_t size, int val, size_t capacity)
 {
 	str->size = size;
 	str->capacity = (capacity > size) ? capacity : size + CSTR_ST_SZ;
@@ -74,8 +73,7 @@ int init_cstr_sz_cap(rsw_cstr* str, size_t size, char val, size_t capacity)
 		return 0;
 	}
 
-	for (int i=0; i<size; ++i)
-		str->a[i] = val;
+	memset(str->a, val, size);
 	str->a[size] = 0;
 
 	return 1;
@@ -172,6 +170,7 @@ int cstr_extend(rsw_cstr* str, size_t num, char a)
 }
 
 
+//insert will insert at the end (str->size) behaving just like push
 int cstr_insert(rsw_cstr* str, size_t i, char a)
 {
 	char* tmp;
@@ -197,13 +196,14 @@ int cstr_insert(rsw_cstr* str, size_t i, char a)
 }
 
 
-
-int cstr_insert_str(rsw_cstr* str, size_t i, char* a, size_t num)
+//The insert functions will work inserting at the end ie at str->size
+//in which case they behave just like the concatenate functions
+int cstr_insert_str(rsw_cstr* str, size_t i, char* a, size_t len)
 {
 	char* tmp;
 	size_t tmp_sz;
-	if (str->capacity < str->size + num + 1) {
-		tmp_sz = str->capacity + num + CSTR_ST_SZ;
+	if (str->capacity < str->size + len + 1) {
+		tmp_sz = str->capacity + len + CSTR_ST_SZ;
 		if (!(tmp = (char*)realloc(str->a, sizeof(char)*tmp_sz))) {
 			assert(tmp != NULL);
 			return 0;
@@ -212,9 +212,9 @@ int cstr_insert_str(rsw_cstr* str, size_t i, char* a, size_t num)
 		str->capacity = tmp_sz;
 	}
 
-	memmove(&str->a[i+num], &str->a[i], (str->size-i)*sizeof(char));
-	memcpy(&str->a[i], a, num*sizeof(char));
-	str->size += num;
+	memmove(&str->a[i+len], &str->a[i], (str->size-i)*sizeof(char));
+	memcpy(&str->a[i], a, len*sizeof(char));
+	str->size += len;
 	str->a[str->size] = 0;
 	return 1;
 }
@@ -223,9 +223,9 @@ int cstr_insert_cstr(rsw_cstr* str, size_t i, rsw_cstr* a_str)
 {
 	char* tmp;
 	size_t tmp_sz;
-	size_t num = a_str->size;
-	if (str->capacity < str->size + num + 1) {
-		tmp_sz = str->capacity + num + CSTR_ST_SZ;
+	size_t len = a_str->size;
+	if (str->capacity < str->size + len + 1) {
+		tmp_sz = str->capacity + len + CSTR_ST_SZ;
 		if (!(tmp = (char*)realloc(str->a, sizeof(char)*tmp_sz))) {
 			assert(tmp != NULL);
 			return 0;
@@ -234,9 +234,50 @@ int cstr_insert_cstr(rsw_cstr* str, size_t i, rsw_cstr* a_str)
 		str->capacity = tmp_sz;
 	}
 
-	memmove(&str->a[i+num], &str->a[i], (str->size-i)*sizeof(char));
-	memcpy(&str->a[i], a_str->a, num*sizeof(char));
-	str->size += num;
+	memmove(&str->a[i+len], &str->a[i], (str->size-i)*sizeof(char));
+	memcpy(&str->a[i], a_str->a, len*sizeof(char));
+	str->size += len;
+	str->a[str->size] = 0;
+	return 1;
+}
+
+int cstr_concatenate(rsw_cstr* str, char* a, size_t len)
+{
+	char* tmp;
+	size_t tmp_sz;
+	if (str->capacity < str->size + len + 1) {
+		tmp_sz = str->capacity + len + CSTR_ST_SZ;
+		if (!(tmp = (char*)realloc(str->a, sizeof(char)*tmp_sz))) {
+			assert(tmp != NULL);
+			return 0;
+		}
+		str->a = tmp;
+		str->capacity = tmp_sz;
+	}
+
+	memcpy(&str->a[str->size], a, len);
+	str->size += len;
+	str->a[str->size] = 0;
+	return 1;
+}
+
+int cstr_concatenate_cstr(rsw_cstr* str, rsw_cstr* a_str)
+{
+	char* tmp;
+	size_t tmp_sz;
+	size_t len = a_str->size;
+	if (str->capacity < str->size + len + 1) {
+		tmp_sz = str->capacity + len + CSTR_ST_SZ;
+		if (!(tmp = (char*)realloc(str->a, sizeof(char)*tmp_sz))) {
+			assert(tmp != NULL);
+			return 0;
+		}
+		str->a = tmp;
+		str->capacity = tmp_sz;
+	}
+
+	memcpy(&str->a[str->size], a_str->a, len);
+	str->size += len;
 	str->a[str->size] = 0;
 	return 1;
 }
@@ -323,12 +364,12 @@ void free_cstr(void* str)
 }
 
 /* Sets a cstr to first num chars in a (clears previous contents) */
-int cstr_set_str(rsw_cstr* str, char* a, size_t num)
+int cstr_set_str(rsw_cstr* str, char* a, size_t len)
 {
 	char* tmp;
 	size_t tmp_sz;
-	if (str->capacity < str->size + num + 1) {
-		tmp_sz = str->capacity + num + CSTR_ST_SZ;
+	if (str->capacity < len + 1) {
+		tmp_sz = len + CSTR_ST_SZ;
 		if (!(tmp = (char*)realloc(str->a, sizeof(char)*tmp_sz))) {
 			assert(tmp != NULL);
 			return 0;
@@ -337,8 +378,8 @@ int cstr_set_str(rsw_cstr* str, char* a, size_t num)
 		str->capacity = tmp_sz;
 	}
 
-	memcpy(str->a, a, num*sizeof(char));
-	str->size = num;
+	memcpy(str->a, a, len*sizeof(char));
+	str->size = len;
 	str->a[str->size] = 0;
 	return 1;
 }
@@ -526,6 +567,205 @@ int cstr_split(rsw_cstr* str, rsw_cstr* delim, rsw_cstr** results, size_t* num_r
 	*num_results = num;
 	*results = tmp;
 	return 1;
+}
+
+
+int file_open_read_cstr(const char* filename, rsw_cstr* str)
+{
+	FILE *file = fopen(filename, "r");
+	if (!file)
+		return 0;
+
+	return file_read_cstr(file, str);
+}
+
+int file_open_read_new_cstr(const char* filename, rsw_cstr* str)
+{
+	FILE *file = fopen(filename, "r");
+	if (!file)
+		return 0;
+
+	return file_read_new_cstr(file, str);
+}
+
+//assumes str already initialized
+int file_read_cstr(FILE* file, rsw_cstr* str)
+{
+	long size;
+
+	fseek(file, 0, SEEK_END);
+	size = ftell(file);
+	if (size <= 0) {
+		if (size == -1)
+			perror("ftell failure");
+		fclose(file);
+		str->size = 0;
+		return 0;
+	}
+
+	if (!cstr_reserve(str, size)) {
+		fclose(file);
+		return 0;
+	}
+	
+	rewind(file);
+	if (!fread(str->a, size, 1, file)) {
+		perror("fread failure");
+		fclose(file);
+		return 0;
+	}
+
+	str->a[size] = 0;
+
+	fclose(file);
+	return size;
+}
+
+//str is not initialized
+int file_read_new_cstr(FILE* file, rsw_cstr* str)
+{
+	long size;
+
+	fseek(file, 0, SEEK_END);
+	size = ftell(file);
+	if (size <= 0) {
+		if (size == -1)
+			perror("ftell failure");
+		fclose(file);
+		str->size = 0;
+		return 0;
+	}
+
+	//allocate just enough, maybe change later or add a parameter
+	if (!init_cstr_cap(str, size+1)) {
+		fclose(file);
+		return 0;
+	}
+	
+	rewind(file);
+	if (!fread(str->a, size, 1, file)) {
+		perror("fread failure");
+		fclose(file);
+		return 0;
+	}
+
+	str->a[size] = 0;
+
+	fclose(file);
+	return size;
+}
+
+
+
+int file_open_write_cstr(const char* filename, rsw_cstr* str)
+{
+	FILE* file = fopen(filename, "w");
+	if (!file)
+		return 0;
+
+	return file_write_cstr(file, str);
+}
+
+int file_write_cstr(FILE* file, rsw_cstr* str)
+{
+	int ret = fwrite(str->a, 1, str->size, file);
+	fclose(file);
+	return (ret == str->size);
+}
+
+
+int file_open_readlines_cstr(const char* filename, rsw_cstr** lines, size_t* num_results)
+{
+	rsw_cstr filedata, delim;
+
+	if (!num_results)
+		return 0;
+
+	if (!file_open_read_new_cstr(filename, &filedata)) {
+		*num_results = 0;
+		return 0;
+	}
+
+	//seems dumb to malloc 2 bytes .. I should make a split function that
+	//only splits on single character delimiters, passed in as a char not a cstr or a char*
+	delim.a = "\n";
+	delim.size = 1;
+	delim.capacity = 2;
+
+	if (!cstr_split(&filedata, &delim, lines, num_results)) {
+		free_cstr(&filedata);
+		return 0;
+	}
+
+	return 1;
+}
+
+//assumes str is initialized, returns # chars added or 0 on error
+int freadstring_into_cstr(FILE* input, int delim, rsw_cstr* str)
+{
+	int temp;
+	int i=0;
+
+	if (feof(input))
+		return 0;
+
+	while (1) {
+		temp = getc(input);
+
+		if (temp == EOF || temp == delim) {
+			if (!i && temp != delim) {
+				return 0;
+			}
+			break;
+		}
+
+		cstr_push(str, temp);
+		++i;
+	}
+
+	str->a[str->size] = '\0';
+	return i;
+}
+
+int freadline_into_cstr(FILE* input, rsw_cstr* str)
+{
+	return freadstring_into_cstr(input, '\n', str);
+}
+
+int freadstring_into_new_cstr(FILE* input, int delim, rsw_cstr* str)
+{
+	int temp;
+	int i=0;
+
+	//I figure 99 is long enough to handle most delimited strings
+	//without realloc'ing, ie csv's
+	if (!init_cstr_cap(str, 100))
+		return 0;
+
+	if (feof(input))
+		return 0;
+
+	while (1) {
+		temp = getc(input);
+
+		if (temp == EOF || temp == delim) {
+			if (!i && temp != delim) {
+				return 0;
+			}
+			break;
+		}
+
+		cstr_push(str, temp);
+		++i;
+	}
+
+	str->a[str->size] = '\0';
+	return i;
+}
+
+int freadline_into_new_cstr(FILE* input, rsw_cstr* str)
+{
+	return freadstring_into_new_cstr(input, '\n', str);
 }
 
 
