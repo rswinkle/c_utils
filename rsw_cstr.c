@@ -80,18 +80,18 @@ int init_cstr_sz_cap(rsw_cstr* str, size_t size, int val, size_t capacity)
 }
 
 
-int init_cstr_str(rsw_cstr* str, char* start, size_t num)
+int init_cstr_str(rsw_cstr* str, char* start, size_t len)
 {
-	str->capacity = num + CSTR_ST_SZ;
-	str->size = num;
+	str->capacity = len + CSTR_ST_SZ;
+	str->size = len;
 	if (!(str->a = (char*)malloc(str->capacity*sizeof(char)))) {
 		assert(str->a != NULL);
 		str->size = str->capacity = 0;
 		return 0;
 	}
 
-	memcpy(str->a, start, sizeof(char)*num);
-	str->a[num] = 0;
+	memcpy(str->a, start, sizeof(char)*len);
+	str->a[len] = 0;
 
 	return 1;
 }
@@ -552,8 +552,9 @@ int cstr_split(rsw_cstr* str, rsw_cstr* delim, rsw_cstr** results, size_t* num_r
 	}
 
 	//if the last thing in the string was the delimiter then search will be '\0'
-	if (search) {
-		init_cstr_str(&ret[num], search, str->a+str->size-search);
+	//else put everything left in one last result
+	if (*search) {
+		init_cstr_str(&ret[num], search, str->size-(search-str->a));
 		++num;
 	}
 
@@ -615,7 +616,8 @@ int file_read_cstr(FILE* file, rsw_cstr* str)
 		return 0;
 	}
 
-	str->a[size] = 0;
+	str->size = size;
+	str->a[str->size] = 0;
 
 	fclose(file);
 	return size;
@@ -649,7 +651,8 @@ int file_read_new_cstr(FILE* file, rsw_cstr* str)
 		return 0;
 	}
 
-	str->a[size] = 0;
+	str->size = size;
+	str->a[str->size] = 0;
 
 	fclose(file);
 	return size;

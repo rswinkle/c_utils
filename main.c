@@ -72,17 +72,32 @@ int main()
 	if (!split(&file_contents, (byte*)"!@#", 3, &test_split)) {
 		printf("error splitting\n");
 	} else {
+		rsw_cstr test_concat;
+		init_cstr(&test_concat);
+		
 		printf("spliting results:\n================\n");
 		results = (c_array*)test_split.data;
 		for (i=0; i<test_split.len; i++) {
+			cstr_concatenate(&test_concat, (char*)results[i].data, results[i].len);
 			printf("\"");
 			for (j=0; j<results[i].len; j++)
 				printf("%c", results[i].data[j]);
 			printf("\"\n");
+
+			if (i+1 < test_split.len) {
+				cstr_concatenate(&test_concat, "!@#", 3);
+				//cstr_push(&test_concat, '!');
+				//cstr_push(&test_concat, '@');
+				//cstr_push(&test_concat, '#');
+			}
 		}
 		printf("\n================\n");
 		free(test_split.data);
 		free(file_contents.data);
+		
+		printf("\n\"%s\"\n\n", test_concat.a);
+		file_open_write_cstr("../concat_results", &test_concat);
+		free_cstr(&test_concat);
 	}
 
 
@@ -209,19 +224,23 @@ int main()
 
 	free(cstr_results);
 
-	if (!file_open_read("../alt-2600-hack-faq.txt", "r", &file_contents)) {
+
+
+	if (!file_open_read_cstr("../alt-2600-hack-faq.txt", &file_str)) {
 		perror("Error opening ../alt-2600-hack-faq.txt");
 		return 0;
 	}
-	cstr_set_str(&file_str, (char*)file_contents.data, file_contents.len);
-	free(file_contents.data);
+	//cstr_set_str(&file_str, (char*)file_contents.data, file_contents.len);
+	
 	cstr_set_str(&delim, "password", 8);
 	
 	cstr_split(&file_str, &delim, &cstr_results, &num_results);
 	printf("num_results = %u\n", num_results);
 
+	/*
 	for (int i=0; i<num_results; ++i)
 		printf("%d = \"%s\"\n", i, cstr_results[i].a);
+		*/
 
 	for (int i=0; i<num_results; ++i)
 		free_cstr(&cstr_results[i]);

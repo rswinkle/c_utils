@@ -27,7 +27,7 @@ int init_cstr(rsw_cstr* str);
 int init_cstr_cap(rsw_cstr* str, size_t capacity);
 int init_cstr_sz(rsw_cstr* str, size_t size, int val);
 int init_cstr_sz_cap(rsw_cstr* str, size_t size, int val, size_t capacity);
-int init_cstr_str(rsw_cstr* str, char* start, size_t num);
+int init_cstr_str(rsw_cstr* str, char* start, size_t len);
 
 //rsw_cstr* vec_char_heap(size_t size, size_t capacity);
 //rsw_cstr* init_vec_char_heap(char* vals, size_t num);
