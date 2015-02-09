@@ -41,6 +41,7 @@ int init_cstr_cap(rsw_cstr* str, size_t capacity)
 		str->capacity = 0;
 		return 0;
 	}
+	str->a[0] = 0;
 
 	return 1;
 }
@@ -96,21 +97,14 @@ int init_cstr_str(rsw_cstr* str, char* start, size_t len)
 	return 1;
 }
 
+/** Assumes dest is initialized */
 void cstr_copy(void* dest, void* src)
 {
 	rsw_cstr* str1 = (rsw_cstr*)dest;
 	rsw_cstr* str2 = (rsw_cstr*)src;
 	
-	char* tmp;
-	if (str1->capacity < str2->size + 1) {
-		/*not much else we can do here*/
-		if (!(tmp = (char*)realloc(str1->a, str2->capacity*sizeof(char)))) {
-			assert(tmp != NULL);
-			return;
-		}
-		str1->a = tmp;
-		str1->capacity = str2->capacity;
-	}
+	if (!cstr_reserve(str1, str2->size))
+		return;
 	
 	memcpy(str1->a, str2->a, str2->size*sizeof(char));
 	str1->a[str1->size] = 0;
@@ -261,6 +255,7 @@ int cstr_concatenate(rsw_cstr* str, char* a, size_t len)
 	return 1;
 }
 
+//TODO replace innards with call to cstr_concatenate?
 int cstr_concatenate_cstr(rsw_cstr* str, rsw_cstr* a_str)
 {
 	char* tmp;
@@ -454,16 +449,14 @@ rsw_cstr cstr_substr(rsw_cstr* str, size_t index, size_t len)
 	return s;
 }
 
-int cstr_resize(rsw_cstr* str, size_t size, char val)
+int cstr_resize(rsw_cstr* str, size_t size, int val)
 {
 	if (!cstr_reserve(str, size))
 		return 0;
 
 	size_t i;
 	if (size > str->size)
-		for (i=str->size; i<size; ++i) {
-			str->a[i] = val;
-		}
+		memset(&str->a[str->size], val, size-str->size);
 
 	str->size = size;
 	str->a[size] = 0;
@@ -483,6 +476,7 @@ size_t cstr_find(rsw_cstr* str, rsw_cstr* needle)
 
 size_t cstr_find_start_at(rsw_cstr* str, rsw_cstr* needle, size_t start)
 {
+	//TODO remove non-memory asserts?  return 0 here?
 	assert(start < str->size);
 
 	char* result = strstr(&str->a[start], needle->a);
@@ -493,20 +487,57 @@ size_t cstr_find_start_at(rsw_cstr* str, rsw_cstr* needle, size_t start)
 }
 
 
-int cstr_replace(rsw_cstr* str, size_t index, size_t num, rsw_cstr* str2)
+//replace up to num characters of str starting at index with all of str2
+//so this can cause the string to grow or shrink or stay the same size
+int cstr_replace_cstr(rsw_cstr* str, size_t index, size_t num, rsw_cstr* str2)
 {
-	assert(index < str->size);
-
-	size_t len = (num < str2->size) ? num : str2->size;
-
-	if (!cstr_reserve(str, index + len)) {
+	if (index >= str->size) {
+		assert(index < str->size);
 		return 0;
 	}
 
-	for (size_t i=0; i<len; ++i) {
-		str->a[index+i] = str2->a[i];
+	if (num == (size_t)-1 || index + num > str->size)
+		num = str->size - index;
+
+	long len_added = str2->size - num;
+
+	if (len_added > 0 && !cstr_reserve(str, str->size + len_added))
+		return 0;
+
+	//could leave out the check ... it'd just copy the elements to where they already were
+	if (len_added)
+		memmove(&str->a[index+str2->size], &str->a[index+num], str->size-(index+num));
+
+	memcpy(&str1->a[index], str2->a, str2->size);
+
+	str->size = str->size + len_added;
+	str->a[str->size] = 0;
+	return 1;
+}
+
+int cstr_replace(rsw_cstr* str, size_t index, size_t num, char* a, size_t len)
+{
+	if (index >= str->size) {
+		assert(index < str->size);
+		return 0;
 	}
 
+	if (num == (size_t)-1 || index + num > str->size)
+		num = str->size - index;
+
+	long len_added = len - num;
+
+	if (len_added > 0 && !cstr_reserve(str, str->size + len_added))
+		return 0;
+
+	//could leave out the check ... it'd just copy the elements to where they already were
+	if (len_added)
+		memmove(&str->a[index+len], &str->a[index+num], str->size-(index+num));
+
+	memcpy(&str1->a[index], a, len);
+
+	str->size = str->size + len_added;
+	str->a[str->size] = 0;
 	return 1;
 }
 
