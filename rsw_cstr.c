@@ -255,28 +255,12 @@ int cstr_concatenate(rsw_cstr* str, char* a, size_t len)
 	return 1;
 }
 
-//TODO replace innards with call to cstr_concatenate?
 int cstr_concatenate_cstr(rsw_cstr* str, rsw_cstr* a_str)
 {
-	char* tmp;
-	size_t tmp_sz;
-	size_t len = a_str->size;
-	if (str->capacity < str->size + len + 1) {
-		tmp_sz = str->capacity + len + CSTR_ST_SZ;
-		if (!(tmp = (char*)realloc(str->a, sizeof(char)*tmp_sz))) {
-			assert(tmp != NULL);
-			return 0;
-		}
-		str->a = tmp;
-		str->capacity = tmp_sz;
-	}
-
-	memcpy(&str->a[str->size], a_str->a, len);
-	str->size += len;
-	str->a[str->size] = 0;
-	return 1;
+	return cstr_concatenate(str, a_str->a, a_str->size);
 }
 
+/** Erace characters between start and end inclusive */
 void cstr_erase(rsw_cstr* str, size_t start, size_t end)
 {
 	size_t d = end - start + 1;
@@ -491,28 +475,7 @@ size_t cstr_find_start_at(rsw_cstr* str, rsw_cstr* needle, size_t start)
 //so this can cause the string to grow or shrink or stay the same size
 int cstr_replace_cstr(rsw_cstr* str, size_t index, size_t num, rsw_cstr* str2)
 {
-	if (index >= str->size) {
-		assert(index < str->size);
-		return 0;
-	}
-
-	if (num == (size_t)-1 || index + num > str->size)
-		num = str->size - index;
-
-	long len_added = str2->size - num;
-
-	if (len_added > 0 && !cstr_reserve(str, str->size + len_added))
-		return 0;
-
-	//could leave out the check ... it'd just copy the elements to where they already were
-	if (len_added)
-		memmove(&str->a[index+str2->size], &str->a[index+num], str->size-(index+num));
-
-	memcpy(&str1->a[index], str2->a, str2->size);
-
-	str->size = str->size + len_added;
-	str->a[str->size] = 0;
-	return 1;
+	return cstr_replace(str, index, num, str2->a, str2->size);
 }
 
 int cstr_replace(rsw_cstr* str, size_t index, size_t num, char* a, size_t len)
@@ -534,7 +497,7 @@ int cstr_replace(rsw_cstr* str, size_t index, size_t num, char* a, size_t len)
 	if (len_added)
 		memmove(&str->a[index+len], &str->a[index+num], str->size-(index+num));
 
-	memcpy(&str1->a[index], a, len);
+	memcpy(&str->a[index], a, len);
 
 	str->size = str->size + len_added;
 	str->a[str->size] = 0;
