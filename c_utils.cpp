@@ -202,7 +202,7 @@ int freadstring_into_str(FILE* input, int delim, char* str, size_t len)
 		temp = getc(input);
 
 		if (temp == EOF || temp == delim) {
-			if (!i && temp == EOF) {
+			if (!i && temp != delim) {
 				return 0;
 			}
 			break;
@@ -565,7 +565,7 @@ size_t find(c_array haystack, c_array needle)
 		}
 	}
 
-	return -1;
+	return -1; /* make a macro or static const size_t npos = -1 ? */
 }
 
 /*

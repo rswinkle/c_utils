@@ -268,5 +268,7 @@ int main()
 
 
 	free_cstr(&file_str);
+
 	return 0;
 }
+

@@ -1,4 +1,6 @@
 #include "c_utils.h"
+#include "rsw_cstr.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -44,7 +46,7 @@ int main()
 
 	slice1 = slice_c_array(a, 0, a.len);
 	slice2 = slice_c_array(a, 1, -1);
-	printf("%s\n%s\n%s\n", a.data, slice1.data, slice2.data);
+	printf("actual string: '%s'\n[0,len]: '%s'\nstr[1,-1]: '%s'\n", a.data, slice1.data, slice2.data);
 
 	char* trim_test = mystrdup(test_strs[2]);
 
@@ -65,19 +67,39 @@ int main()
 
 
 	c_array file_contents, test_split, *results;
-	file_open_read("../split_test", "r", &file_contents);
+	if (!file_open_read("../split_test", "r", &file_contents)) {
+		perror("Error opening ../split_test");
+		return 0;
+	}
 	if (!split(&file_contents, (byte*)"!@#", 3, &test_split)) {
 		printf("error splitting\n");
 	} else {
+		rsw_cstr test_concat;
+		init_cstr(&test_concat);
+		
+		printf("spliting results:\n================\n");
 		results = (c_array*)test_split.data;
 		for (i=0; i<test_split.len; i++) {
+			cstr_concatenate(&test_concat, (char*)results[i].data, results[i].len);
 			printf("\"");
 			for (j=0; j<results[i].len; j++)
 				printf("%c", results[i].data[j]);
 			printf("\"\n");
+
+			if (i+1 < test_split.len) {
+				cstr_concatenate(&test_concat, "!@#", 3);
+				//cstr_push(&test_concat, '!');
+				//cstr_push(&test_concat, '@');
+				//cstr_push(&test_concat, '#');
+			}
 		}
+		printf("\n================\n");
 		free(test_split.data);
 		free(file_contents.data);
+		
+		printf("\n\"%s\"\n\n", test_concat.a);
+		file_open_write_cstr("../concat_results", &test_concat);
+		free_cstr(&test_concat);
 	}
 
 
@@ -179,6 +201,109 @@ int main()
 
 	printf("int is_any = %d\n", is_any(&int_c_array, (byte*)&to_find_int, are_equal_int));
 	printf("double is_any = %d\n", is_any(&double_c_array, (byte*)&to_find_double, are_equal_double));
+
+
+	if (!file_open_read("../split_test", "r", &file_contents)) {
+		perror("Error opening ../split_test");
+		return 0;
+	}
+
+	rsw_cstr file_str, delim;
+	
+	init_cstr_str(&file_str, (char*)file_contents.data, file_contents.len);
+	free(file_contents.data);
+	init_cstr_str(&delim, "!@#", 3);
+
+	rsw_cstr* cstr_results;
+	size_t num_results;
+	cstr_split(&file_str, &delim, &cstr_results, &num_results);
+
+	for (int i=0; i<num_results; ++i)
+		printf("%d = \"%s\"\n", i, cstr_results[i].a);
+
+	for (int i=0; i<num_results; ++i)
+		free_cstr(&cstr_results[i]);
+
+	free(cstr_results);
+
+
+
+	if (!file_open_read_cstr("../alt-2600-hack-faq.txt", &file_str)) {
+		perror("Error opening ../alt-2600-hack-faq.txt");
+		return 0;
+	}
+	//cstr_set_str(&file_str, (char*)file_contents.data, file_contents.len);
+	
+	cstr_set_str(&delim, "password", 8);
+	
+	cstr_split(&file_str, &delim, &cstr_results, &num_results);
+	printf("num_results = %u\n", num_results);
+
+	/*
+	for (int i=0; i<num_results; ++i)
+		printf("%d = \"%s\"\n", i, cstr_results[i].a);
+		*/
+
+	for (int i=0; i<num_results; ++i)
+		free_cstr(&cstr_results[i]);
+
+	free(cstr_results);
+	free_cstr(&delim);
+
+
+	if (!file_open_read_cstr("../replace_test", &file_str)) {
+		perror("Error opening ../replace_test");
+		return 0;
+	}
+
+	size_t not_found = -1;
+	size_t start_at = 0;
+	size_t result;
+	rsw_cstr hello_str = { "hello", 5, 6 };
+	while ((result = cstr_find_start_at(&file_str, &hello_str, start_at)) != (size_t)-1) {
+		cstr_replace(&file_str, result, 5, "goodbye", 7);
+		start_at += 3;
+	}
+
+	file_open_write_cstr("../replace_results", &file_str);
+	printf("\"%s\"\n", file_str.a);
+
+
+	free_cstr(&file_str);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	printf("size_type is %d bytes\n", sizeof(string::size_type));

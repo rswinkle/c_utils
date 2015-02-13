@@ -43,10 +43,12 @@ solution "CUtils"
 		language "C++"
 		files
 		{
-			 "main.cpp",
-			 "c_utils.cpp",
-			 "c_utils.h",
-			 "basic_types.h"
+			"main.cpp",
+			"c_utils.cpp",
+			"c_utils.h",
+			"rsw_cstr.cpp",
+			"rsw_cstr.h",
+			"basic_types.h"
 		}
  --   excludes { "c_utils.*" }
  --   libdirs { "/usr/lib64/" }
