@@ -67,8 +67,12 @@ rsw_cstr* cstr_trim(rsw_cstr* str);
 rsw_cstr slice_cstr(rsw_cstr* str, long start, long end);
 rsw_cstr cstr_substr(rsw_cstr* str, size_t index, size_t len);
 int cstr_resize(rsw_cstr* str, size_t size, int val);
+
 size_t cstr_find(rsw_cstr* str, rsw_cstr* needle);
 size_t cstr_find_start_at(rsw_cstr* str, rsw_cstr* needle, size_t start);
+size_t cstr_find_str(rsw_cstr* str, char* needle);
+size_t cstr_find_str_start_at(rsw_cstr* str, char* needle, size_t start);
+
 int cstr_replace(rsw_cstr* str, size_t index, size_t num, char* a, size_t len);
 int cstr_replace_cstr(rsw_cstr* str, size_t index, size_t num, rsw_cstr* str2);
 

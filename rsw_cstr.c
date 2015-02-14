@@ -460,8 +460,8 @@ size_t cstr_find(rsw_cstr* str, rsw_cstr* needle)
 
 size_t cstr_find_start_at(rsw_cstr* str, rsw_cstr* needle, size_t start)
 {
-	//TODO remove non-memory asserts?  return 0 here?
-	assert(start < str->size);
+	if (start >= str->size)
+		return -1;
 
 	char* result = strstr(&str->a[start], needle->a);
 	if (result)
@@ -470,6 +470,26 @@ size_t cstr_find_start_at(rsw_cstr* str, rsw_cstr* needle, size_t start)
 		return -1; /* TODO make a macro or static const size_t npos = -1 ? */
 }
 
+size_t cstr_find_str(rsw_cstr* str, char* needle)
+{
+	char* result = strstr(str->a, needle);
+	if (result)
+		return result - str->a;
+	else
+		return -1; /* TODO make a macro or static const size_t npos = -1 ? */
+}
+
+size_t cstr_find_str_start_at(rsw_cstr* str, char* needle, size_t start)
+{
+	if (start >= str->size)
+		return -1;
+
+	char* result = strstr(&str->a[start], needle);
+	if (result)
+		return result - str->a;
+	else
+		return -1; /* TODO make a macro or static const size_t npos = -1 ? */
+}
 
 //replace up to num characters of str starting at index with all of str2
 //so this can cause the string to grow or shrink or stay the same size
