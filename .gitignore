@@ -1,10 +1,11 @@
 #ignore ~ files
 *~
-*.swp
-Images/*
-Models/*
+*.gif
+*.kate-swp
 CMakeFiles/*
 CMakeCache.txt
-framework
 Makefile
 cmake_install.cmake
+stats/*
+build/*
+*.swp
