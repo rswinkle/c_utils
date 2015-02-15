@@ -97,7 +97,6 @@ int file_read(FILE* file, c_array* out)
 
 	out->data = data;
 	out->len = size;
-	out->elem_size = 1;
 
 	fclose(file);
 	return size;

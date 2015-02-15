@@ -19,20 +19,20 @@ solution "CUtils"
 			"rsw_cstr.h",
 			"basic_types.h"
 		}
- --   excludes { "c_utils.*" }
- --   libdirs { "/usr/lib64/" }
- --   includedirs { "./inc" }
- --   links { "c_utils" } 
-	  targetdir "build"
-  
+--		excludes { "c_utils.*" }
+--		libdirs { "/usr/lib64/" }
+--		includedirs { "./inc" }
+		links { "cunit" } 
+		targetdir "build"
+
 		configuration "Debug"
 			defines { "DEBUG" }
 			flags { "Symbols" }
- 
+
 		configuration "Release"
 			defines { "NDEBUG" }
 			flags { "Optimize" }
- 
+
 		configuration { "linux", "gmake" }
 			buildoptions { "-std=c99", "-pedantic" }
 
