@@ -107,8 +107,8 @@ void cstr_copy(void* dest, void* src)
 		return;
 	
 	memcpy(str1->a, str2->a, str2->size*sizeof(char));
-	str1->a[str1->size] = 0;
 	str1->size = str2->size;
+	str1->a[str1->size] = 0;
 }
 
 
@@ -438,7 +438,6 @@ int cstr_resize(rsw_cstr* str, size_t size, int val)
 	if (!cstr_reserve(str, size))
 		return 0;
 
-	size_t i;
 	if (size > str->size)
 		memset(&str->a[str->size], val, size-str->size);
 
@@ -460,8 +459,8 @@ size_t cstr_find(rsw_cstr* str, rsw_cstr* needle)
 
 size_t cstr_find_start_at(rsw_cstr* str, rsw_cstr* needle, size_t start)
 {
-	//TODO remove non-memory asserts?  return 0 here?
-	assert(start < str->size);
+	if (start >= str->size)
+		return -1;
 
 	char* result = strstr(&str->a[start], needle->a);
 	if (result)
@@ -470,15 +469,66 @@ size_t cstr_find_start_at(rsw_cstr* str, rsw_cstr* needle, size_t start)
 		return -1; /* TODO make a macro or static const size_t npos = -1 ? */
 }
 
+size_t cstr_find_str(rsw_cstr* str, char* needle)
+{
+	char* result = strstr(str->a, needle);
+	if (result)
+		return result - str->a;
+	else
+		return -1; /* TODO make a macro or static const size_t npos = -1 ? */
+}
+
+size_t cstr_find_str_start_at(rsw_cstr* str, char* needle, size_t start)
+{
+	if (start >= str->size)
+		return -1;
+
+	char* result = strstr(&str->a[start], needle);
+	if (result)
+		return result - str->a;
+	else
+		return -1; /* TODO make a macro or static const size_t npos = -1 ? */
+}
+
+int cstr_replace(rsw_cstr* str, char* find, char* a, size_t count)
+{
+	size_t find_len = strlen(find);
+	size_t a_len = strlen(a);
+	long len_added = a_len - find_len;
+	size_t index;
+
+	if (count == 0)
+		count = -1; /* converted to max value */
+
+
+	char* result = strstr(str->a, find);
+	while (result && count > 0) {
+		index = result - str->a;
+
+		if (len_added > 0 && !cstr_reserve(str, str->size + len_added))
+			return 0;
+
+		if (len_added)
+			memmove(&str->a[index+a_len], &str->a[index+find_len], str->size-(index+find_len));
+
+		memcpy(&str->a[index], a, a_len);
+		str->size += len_added;
+		str->a[str->size] = 0;
+		--count;
+		result = strstr(&str->a[index+a_len], find);
+	}
+
+	return 1;
+}
 
 //replace up to num characters of str starting at index with all of str2
 //so this can cause the string to grow or shrink or stay the same size
-int cstr_replace_cstr(rsw_cstr* str, size_t index, size_t num, rsw_cstr* str2)
+int cstr_replace_substr_cstr(rsw_cstr* str, size_t index, size_t num, rsw_cstr* str2)
 {
-	return cstr_replace(str, index, num, str2->a, str2->size);
+	return cstr_replace_substr(str, index, num, str2->a, str2->size);
 }
 
-int cstr_replace(rsw_cstr* str, size_t index, size_t num, char* a, size_t len)
+int cstr_replace_substr(rsw_cstr* str, size_t index, size_t num, char* a, size_t len)
 {
 	if (index >= str->size) {
 		assert(index < str->size);
@@ -499,7 +549,7 @@ int cstr_replace(rsw_cstr* str, size_t index, size_t num, char* a, size_t len)
 
 	memcpy(&str->a[index], a, len);
 
-	str->size = str->size + len_added;
+	str->size += len_added;
 	str->a[str->size] = 0;
 	return 1;
 }

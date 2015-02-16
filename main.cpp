@@ -261,7 +261,7 @@ int main()
 	size_t result;
 	rsw_cstr hello_str = { "hello", 5, 6 };
 	while ((result = cstr_find_start_at(&file_str, &hello_str, start_at)) != (size_t)-1) {
-		cstr_replace(&file_str, result, 5, "goodbye", 7);
+		cstr_replace_substr(&file_str, result, 5, "goodbye", 7);
 		start_at += 3;
 	}
 
