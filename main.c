@@ -63,33 +63,100 @@ void file_rw_cstr_test()
 	CU_ASSERT_STRING_EQUAL(file_str.a, file_str2.a);
 
 	free_cstr(&file_str);
+	free_cstr(&file_str2);
 }
 
 void bottles_of_beer_test()
 {
-	const char verse[] = "#a bottles of beer on the wall, #a bottles of beer, take one down, pass it around, #b bottles of beer on the wall";
+	const char verse[] = "#a bottles of beer on the wall, #a bottles of beer, take one down, pass it around, #b bottles of beer on the wall.";
+	const char verse0[] = "No more bottles of beer on the wall, no more bottles of beer.\nGo to the store, buy some more, 99 bottles of beer on the wall.";
+	const char verse1[] = "1 bottle of beer on the wall, 1 bottle of beer.\nTake one down, pass it around, no more bottles of beer on the wall.";
+	const char of_beer[] = "of beer";
+	const char wall[] = "on the wall";
+	const char take_one[] = "Take one down, pass it around,";
+
 	int len = strlen(verse);
 
 	char int_buf[5], int_buf2[5];
 
 	rsw_cstr template_str;
-	init_cstr_str(&template_str, verse, len);
+//	init_cstr_str(&template_str, verse, len);
 
-	rsw_cstr song, verse_str;
-	init_cstr(&song);
-	init_cstr(&verse_str);
 	int tmp;
-	for (int i=5; i>0; --i) {
-		snprintf(int_buf, 5, "%d", i);
-		snprintf(int_buf2, 5, "%d", i-1);
-		cstr_copy(&verse_str, &template_str);
 
-		cstr_replace(&verse_str, "#a", int_buf, 0);
-		cstr_replace(&verse_str, "#b", int_buf2, 0);
+#define NUM_BOTTLES 5
 
-		cstr_concatenate_cstr(&song, &verse_str);
+	FILE* file1 = fopen("bottles1.txt", "w");
+	for (int i=NUM_BOTTLES; i>=0; --i) {
+		switch (i) {
+		case 0:
+			fprintf(file1, "No more bottles %s %s, no more bottles %s.\nGo to the store, buy some more, 99 bottles %s %s.\n", of_beer, wall, of_beer, of_beer, wall);
+			break;
+		case 1:
+			fprintf(file1, "1 bottle %s %s, 1 bottle %s.\n%s no more bottles %s %s.\n\n", of_beer, wall, of_beer, take_one, of_beer, wall);
+			break;
+		default:
+			fprintf(file1, "%d bottles %s %s, %d bottles %s.\n", i, of_beer, wall, i, of_beer);
+			fprintf(file1, "%s %d %s %s %s.\n\n", take_one, i-1, (i!=2) ? "bottles" : "bottle", of_beer, wall);  
+		}
+	}
+	fclose(file1);
+
+	rsw_cstr bottle_str;
+	int size = file_open_read_new_cstr("bottles1.txt", &bottle_str);
+	
+
+	rsw_cstr song;
+	init_cstr(&song);
+	for (int i=NUM_BOTTLES; i>=0; --i) {
+		switch (i) {
+		case 0:
+			cstr_concatenate(&song, verse0, strlen(verse0));
+			cstr_push(&song, '\n');
+			break;
+		case 1:
+			cstr_concatenate(&song, verse1, strlen(verse1));
+			cstr_push(&song, '\n');
+			cstr_push(&song, '\n');
+			break;
+		default:
+			snprintf(int_buf, 5, "%d", i);
+			snprintf(int_buf2, 5, "%d", i-1);
+			cstr_concatenate(&song, int_buf, strlen(int_buf));
+			cstr_concatenate(&song, " bottles ", 9);
+			cstr_concatenate(&song, of_beer, strlen(of_beer));
+			cstr_push(&song, ' ');
+			cstr_concatenate(&song, wall, strlen(wall));
+			cstr_concatenate(&song, ", ", 2);
+			cstr_concatenate(&song, int_buf, strlen(int_buf));
+			cstr_concatenate(&song, " bottles ", 9);
+			cstr_concatenate(&song, of_beer, strlen(of_beer));
+			cstr_concatenate(&song, ".\n", 2);
+
+			cstr_concatenate(&song, take_one, strlen(take_one));
+			cstr_push(&song, ' ');
+			cstr_concatenate(&song, int_buf2, strlen(int_buf2));
+			if (i != 2)
+				cstr_concatenate(&song, " bottles ", 9);
+			else 
+				cstr_concatenate(&song, " bottle ", 8);
+
+			cstr_concatenate(&song, of_beer, strlen(of_beer));
+			cstr_push(&song, ' ');
+			cstr_concatenate(&song, wall, strlen(wall));
+			cstr_concatenate(&song, ".\n\n", 3);
+		}
 	}
 
+	CU_ASSERT_STRING_EQUAL(song.a, bottle_str.a);
+
+	cstr_replace(&song, "beer", "soda", 0);
+	printf("\"%s\"\n\n", song.a);
+	cstr_replace(&song, "wall", "shelf", 0);
+	printf("\"%s\"\n\n", song.a);
+
+	free_cstr(&song);
+	free_cstr(&bottle_str);
 }
 
 
@@ -101,6 +168,7 @@ CU_TestInfo c_utils_tests[] = {
 
 CU_TestInfo rsw_cstr_tests[] = {
 	{ "file_rw_cstr",      file_rw_cstr_test },
+	{ "bottles_of_beer",   bottles_of_beer_test },
 	CU_TEST_INFO_NULL
 };
 
