@@ -1,21 +1,44 @@
 
 C_UTILS
 =======
-This includes 2 separate, independent libraries.
+This started out as just 1 small library  but now includes 5 separate,
+independent libraries.  This is because I now view this project as a
+growing collection of any broadly useful C libraries I'm likely to
+use/need in any C project.  So this is kind of like my version of
+Sean Barret's [stb project](https://github.com/nothings/stb) but
+specifically his stb.h, full of general useful C code.  Of course
+mine is nowhere near as unified/consistent/well designed or
+comprehensive but oh well.
 
-The first is c_utils which is
-made up of c_utils.c/h and basic_types.h.  This includes utilities for reading/writing
-to/from files and strings, splitting, trimming, and slicing strings as well as other misc. useful
+### c_utils
+What this repository started out as, made up of c_utils.c/h and basic_types.h,
+this includes utilities for reading/writing to/from files and strings,
+splitting, trimming, and slicing strings as well as other misc. useful
 C functions.
 
-The second is a string library modeled after CVector(It actually started
+### rsw_cstr
+This is a string library modeled after CVector (It actually started
 as a generated vector_char).  It has many more functions than CVector, most taken/modeled
 after C++ std::string, including find, replace, substr etc.  It also has it's own functions
 for file reading/writing, splitting, trimming, slicing etc.
 
-They are both written in clean C, ie they compile as C++.  The c and cpp files are identical,
-they're just there so I can have C++ compile test.
+### clist
+Currently just a header file based closely on the Linux kernel's
+intrusive doubly linked list type and functions/macros.  I've added
+a couple functions and will add more.  I also plan to make a deque
+on top of this eventually.
 
+### CQueue
+This is the all in one, cqueue.h file from [CQueue](http://github.com/rswinkle/CQueue)
+
+### CVector
+This is the all in one, cqueue.h file from [CVueue](http://github.com/rswinkle/CVector)
+
+
+They are all written in clean C, ie they compile as C++.  This repository's
+premake only builds and sort of tests c_utils but CQueue and CVector (and thus
+
+#### Note on the difference between c_utils and rsw_cstr
 The main difference between the 2 libraries is that c_utils is very general and has many
 functions that are not I/O related and while all of it's I/O, and manipulation functions work on
 regular strings, they use the c_array type and can be used to read binary data and manipulate
@@ -32,17 +55,19 @@ manipulate individually, erasing, extending, printing, whatever.  Both methods a
 
 Usage
 =====
-To actually use the library just copy the appropriate c/h file pair(s) to your project.
-To get a general idea of how to use the library and see it in action and how it should
-behave, look at the tests in main.c.
+To actually use the libraries just copy the appropriate c/h file(s) to your project.
+To get a general idea of how to use the libraries and see it in action and how it should
+behave, look at the tests in main.c or in the separate repos for CVector and CQueue.
 
 Documentation
 =============
-There is some sparse documentation in the comments but I need to expand it, maybe Doxygenize it.
+There is some sparse documentation in the comments but it's mostly self
+documenting, implementing common functions/interfaces.
 
 
 LICENSE
 =======
+All 5 libraries are licensed under the MIT license
 c_utils is licensed under the MIT License.
 
 Copyright (c) 2013-2015 Robert Winkler
