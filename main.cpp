@@ -237,7 +237,7 @@ int main()
 	cstr_set_str(&delim, "password", 8);
 	
 	cstr_split(&file_str, &delim, &cstr_results, &num_results);
-	printf("num_results = %u\n", num_results);
+	printf("num_results = %lu\n", num_results);
 
 	/*
 	for (int i=0; i<num_results; ++i)
@@ -306,7 +306,7 @@ int main()
 
 
 
-	printf("size_type is %d bytes\n", sizeof(string::size_type));
+	printf("size_type is %lu bytes\n", sizeof(string::size_type));
 
 	string s = "They say he carved it himself...from a BIGGER spoon";
 	cout << s[0] << " " << s[32] << " " << s[33] << "\n";

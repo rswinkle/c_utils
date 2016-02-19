@@ -429,7 +429,7 @@ int read_char(FILE* input, const char* skip_chars, int complement, int clear_lin
 			return ret;
 		tmp = ret;
 		c = is_any(&skip, &tmp, are_equal_uchar);
-	} while (!complement && c || complement && !c);
+	} while ((!complement && c) || (complement && !c));
 
 	if (clear_line && ret != '\n')
 		do { c = getc(input); } while (c != '\n' && c != EOF);
@@ -480,7 +480,7 @@ int split(c_array* array, byte* delim, size_t delim_len, c_array* out)
 
 	results = (c_array*)out->data;
 
-	while (match = (byte*)memchr(&array->data[pos], delim[0], array->len*array->elem_size - pos)) {
+	while ((match = (byte*)memchr(&array->data[pos], delim[0], array->len*array->elem_size - pos))) {
 		if (!memcmp(match, delim, delim_len)) {
 			results[out->len].data = &array->data[pos];
 			results[out->len].elem_size = 1;
@@ -557,7 +557,7 @@ size_t find(c_array haystack, c_array needle)
 {
 	byte* result = haystack.data;
 	byte* end = haystack.data + haystack.len*haystack.elem_size;
-	while (result = (byte*)memchr(result, needle.data[0], end-result)) {
+	while ((result = (byte*)memchr(result, needle.data[0], end-result))) {
 		if (!memcmp(result, needle.data, needle.len*needle.elem_size)) {
 			return result - haystack.data;
 		} else {
