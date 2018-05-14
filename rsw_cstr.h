@@ -40,7 +40,7 @@ char cstr_pop(rsw_cstr* str);
 int cstr_extend(rsw_cstr* str, size_t num, char a);
 int cstr_insert(rsw_cstr* str, size_t i, char a);
 
-int cstr_insert_str(rsw_cstr* str, size_t i, char* a, size_t len);
+int cstr_insert_str(rsw_cstr* str, size_t i, const char* a, size_t len);
 int cstr_insert_cstr(rsw_cstr* str, size_t i, rsw_cstr* a_str);
 
 int cstr_concatenate(rsw_cstr* str, const char* a, size_t len);

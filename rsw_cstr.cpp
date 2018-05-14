@@ -192,7 +192,7 @@ int cstr_insert(rsw_cstr* str, size_t i, char a)
 
 //The insert functions will work inserting at the end ie at str->size
 //in which case they behave just like the concatenate functions
-int cstr_insert_str(rsw_cstr* str, size_t i, char* a, size_t len)
+int cstr_insert_str(rsw_cstr* str, size_t i, const char* a, size_t len)
 {
 	char* tmp;
 	size_t tmp_sz;
@@ -567,8 +567,9 @@ int cstr_split(rsw_cstr* str, rsw_cstr* delim, rsw_cstr** results, size_t* num_r
 			assert(ret);
 			return 0;
 		}
-		num = 1;
 		init_cstr_str(ret, str->a, str->size);
+		*num_results = 1;
+		*results = ret;
 		return 1;
 	}
 

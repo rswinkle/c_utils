@@ -17,7 +17,8 @@ solution "CUtils"
 			"c_utils.h",
 			"rsw_cstr.c",
 			"rsw_cstr.h",
-			"basic_types.h"
+			"basic_types.h",
+			"priority_queue.h"
 		}
 --		excludes { "c_utils.*" }
 --		libdirs { "/usr/lib64/" }

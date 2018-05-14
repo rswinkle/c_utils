@@ -3,6 +3,10 @@
 #include "rsw_cstr.h"
 
 
+#define PRIORITY_QUEUE_IMPLEMENTATION
+#include "priority_queue.h"
+
+
 
 #include <stdlib.h>
 #include <string.h>
@@ -160,6 +164,35 @@ void bottles_of_beer_test()
 }
 
 
+void priority_queue_test()
+{
+	int heap[100];
+	size_t sz = 0, cap = 100;
+	int a, b = INT_MAX;
+
+	for (int i=0; i<50; ++i)
+		maxheap_push(heap, &sz, cap, rand() % 400);
+
+	for (int i=0; i<25; ++i) {
+		a = maxheap_pop(heap, &sz);
+		CU_ASSERT(a <= b);
+		//printf("%d\n", a);
+		b = a;
+	}
+	putchar('\n');
+
+	for (int i=0; i<20; ++i)
+		maxheap_push(heap, &sz, cap, rand() % 400);
+
+	b = INT_MAX;
+	while (sz > 0) {
+		a = maxheap_pop(heap, &sz);
+		CU_ASSERT(a <= b);
+		//printf("%d\n", a);
+		b = a;
+	}
+}
+
 
 CU_TestInfo c_utils_tests[] = {
 	{ "file_rw",           file_rw_test },
@@ -173,9 +206,21 @@ CU_TestInfo rsw_cstr_tests[] = {
 };
 
 
+CU_TestInfo priority_queue_tests[] = {
+	{ "pqtest",           priority_queue_test },
+	CU_TEST_INFO_NULL
+};
+
 CU_SuiteInfo suites[] = {
+#ifndef OLD_CUNIT
+	{ "c_utils", NULL, NULL, NULL, NULL, c_utils_tests },
+	{ "rsw_cstr", NULL, NULL, NULL, NULL, rsw_cstr_tests },
+	{ "priority_queue_tests", NULL, NULL, NULL, NULL, priority_queue_tests },
+#else
 	{ "c_utils", NULL, NULL, c_utils_tests },
 	{ "rsw_cstr", NULL, NULL, rsw_cstr_tests },
+	{ "priority_queue_tests", NULL, NULL, priority_queue_tests },
+#endif
 	CU_SUITE_INFO_NULL
 };
 
