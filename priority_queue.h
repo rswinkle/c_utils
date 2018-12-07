@@ -110,7 +110,7 @@ int maxheap_pop(int* a, size_t* heapsize)
 	}
 	int max = a[0];
 	a[0] = a[--(*heapsize)];
-	maxheapify(a, 0, *heapsize-1);
+	maxheapify(a, 0, *heapsize);
 	return max;
 }
 

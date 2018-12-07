@@ -41,6 +41,58 @@ void file_rw_test()
 	free(file_contents2.data);
 }
 
+char *int2bin(int a, char *buffer, int buf_size) {
+	char* buf = buffer + buf_size - 1;
+	do {
+		*buf-- = (a & 1) + '0';
+		a >>= 1;
+	} while (a);
+
+	return memmove(buffer, ++buf, buffer+buf_size-buf);
+}
+
+void misc_test()
+{
+	char* zero = int_to_str(0, 10);
+	CU_ASSERT_STRING_EQUAL(zero, "0");
+
+
+	char* neg = int_to_str(-1532, 10);
+	CU_ASSERT_STRING_EQUAL(neg, "-1532");
+
+	char* hexdollar = int_to_str(256, 16);
+	CU_ASSERT_STRING_EQUAL(hexdollar, "100");
+
+	srand(time(NULL));
+	int r = rand();
+
+	char* randnum = int_to_str(r, 10);
+	char buf[100] = { 0 };
+
+	sprintf(buf, "%d", r);
+	CU_ASSERT_STRING_EQUAL(randnum, buf);
+
+	char* randbin = int_to_str(r, 2);
+	int2bin(r, buf, 99);
+	printf("%s\n%s\n", randbin, buf);
+	CU_ASSERT_STRING_EQUAL(randbin, buf);
+
+	char* randoct = int_to_str(r, 8);
+	sprintf(buf, "%o", r);
+	CU_ASSERT_STRING_EQUAL(randoct, buf);
+
+	char* randhex = int_to_str(r, 16);
+	sprintf(buf, "%X", r);
+	CU_ASSERT_STRING_EQUAL(randhex, buf);
+
+	free(zero);
+	free(neg);
+	free(hexdollar);
+	free(randnum);
+	free(randbin);
+	free(randoct);
+	free(randhex);
+}
 
 
 
@@ -196,6 +248,7 @@ void priority_queue_test()
 
 CU_TestInfo c_utils_tests[] = {
 	{ "file_rw",           file_rw_test },
+	{ "misc_test",         misc_test },
 	CU_TEST_INFO_NULL
 };
 

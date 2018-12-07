@@ -29,14 +29,10 @@ void mytoupper(const void* c)
 
 int main()
 {
-	int i,j,k;
-	c_array a, b = {NULL, 1, 0} , c;
+	int i,j;
+	c_array a, b = {NULL, 1, 0};
 	c_array e = { NULL, 0, 0 };
-	c_array slice1, slice2, slice3;
-	char** lines;
-	c_array lines_array, line_file;
-	char* one_line = NULL;
-	FILE* file;
+	c_array slice1, slice2;
 
 	printf("%p, %lu %lu\n", b.data, b.elem_size, b.len);
 	printf("%p, %lu %lu\n", d.data, d.elem_size, d.len);
@@ -105,6 +101,10 @@ int main()
 
 
 /*
+	//c_array lines_array, line_file;
+	//char* one_line = NULL;
+	//FILE* file;
+
 	file_open_readlines("../test_readlines", &lines_array, &line_file);
 	for (i=0; i<lines_array.len; i++) {
  	   printf("\"%s\"\n", ((char**)lines_array.data)[i]);
@@ -260,7 +260,7 @@ int main()
 	size_t start_at = 0;
 	size_t result;
 	rsw_cstr hello_str = { "hello", 5, 6 };
-	while ((result = cstr_find_start_at(&file_str, &hello_str, start_at)) != (size_t)-1) {
+	while ((result = cstr_find_start_at(&file_str, &hello_str, start_at)) != not_found) {
 		cstr_replace_substr(&file_str, result, 5, "goodbye", 7);
 		start_at += 3;
 	}
@@ -270,41 +270,6 @@ int main()
 
 
 	free_cstr(&file_str);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	printf("size_type is %lu bytes\n", sizeof(string::size_type));
 
