@@ -34,9 +34,9 @@ This is the all in one, cqueue.h file from [CQueue](http://github.com/rswinkle/C
 ### CVector
 This is the all in one, cqueue.h file from [CVueue](http://github.com/rswinkle/CVector)
 
-
 They are all written in clean C, ie they compile as C++.  This repository's
-premake only builds and sort of tests c_utils but CQueue and CVector (and thus
+premake only builds and sort of tests c_utils but CQueue and CVector (and thus rsw_cstr
+indirectly) have their own tests in their respective repos.
 
 #### Note on the difference between c_utils and rsw_cstr
 The main difference between the 2 libraries is that c_utils is very general and has many
@@ -49,9 +49,8 @@ just so that you can use them to, for example read in a string and immediately p
 A good comparison is the split functions of the 2 libraries.  The c_utils version returns
 an array of c_arrays which point into the original string you're splitting.  In other words, they aren't
 allocated, they aren't NULL terminated (though it'd be easy to NULL terminate) and you can't
-resize them.  The rsw_cstr version returns an array of af cstrs which you can immediately
+resize them.  The rsw_cstr version returns an array of of cstrs which you can immediately
 manipulate individually, erasing, extending, printing, whatever.  Both methods are shown in main.c.
-
 
 Usage
 =====
@@ -68,9 +67,8 @@ documenting, implementing common functions/interfaces.
 LICENSE
 =======
 All 5 libraries are licensed under the MIT license
-c_utils is licensed under the MIT License.
 
-Copyright (c) 2013-2015 Robert Winkler
+Copyright (c) 2013-2018 Robert Winkler
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation
