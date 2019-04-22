@@ -94,6 +94,75 @@ void misc_test()
 	free(randhex);
 }
 
+void mystrtok_test()
+{
+	char test1[] = "hello|blah,goodbye|,whatever|,-who-are-|you";
+	char test2[] = "abc,,cdef,ghi ,jkl,|,mnp";
+
+	char* results1[] =
+	{
+		"hello",
+		"blah,goodbye",
+		",whatever",
+		",-who-are-",
+		"you"
+	};
+	
+	char* results2[] =
+	{
+		"abc",
+		"",
+		"cdef",
+		"ghi ",
+		"jkl",
+		"|",
+		"mnp"
+	};
+	
+
+	char buf[256];
+
+	strcpy(buf, test1);
+
+	char* tok = mystrtok(buf, '|');
+	int i = 0;
+	while (tok) {
+		CU_ASSERT_STRING_EQUAL(tok, results1[i]);
+		tok = mystrtok(NULL, '|');
+		i++;
+	}
+
+	strcpy(buf, test2);
+	i = 0;
+	tok = mystrtok(buf, ',');
+	while (tok) {
+		CU_ASSERT_STRING_EQUAL(tok, results2[i]);
+		tok = mystrtok(NULL, ',');
+		i++;
+	}
+
+	strcpy(buf, test1);
+	i = 0;
+	tok = mystrtok_alloc(buf, '|');
+	while (tok) {
+		CU_ASSERT_STRING_EQUAL(tok, results1[i]);
+		free(tok);
+		tok = mystrtok_alloc(NULL, '|');
+		i++;
+	}
+
+	strcpy(buf, test2);
+	i = 0;
+	tok = mystrtok_alloc(buf, ',');
+	while (tok) {
+		CU_ASSERT_STRING_EQUAL(tok, results2[i]);
+		free(tok);
+		tok = mystrtok_alloc(NULL, ',');
+		i++;
+	}
+}
+
+
 
 
 void file_rw_cstr_test()
@@ -249,6 +318,7 @@ void priority_queue_test()
 CU_TestInfo c_utils_tests[] = {
 	{ "file_rw",           file_rw_test },
 	{ "misc_test",         misc_test },
+	{ "mystrtok_test",     mystrtok_test },
 	CU_TEST_INFO_NULL
 };
 

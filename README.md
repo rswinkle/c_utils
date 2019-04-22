@@ -68,7 +68,7 @@ LICENSE
 =======
 All 5 libraries are licensed under the MIT license
 
-Copyright (c) 2013-2018 Robert Winkler
+Copyright (c) 2013-2019 Robert Winkler
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation

@@ -552,6 +552,52 @@ char* trim(char* str)
 	return ltrim(rtrim(str));
 }
 
+// like strtok but takes a single character delim and doesn't
+// skip empty fields (ie 2 delims next to each other returns "")
+char* mystrtok(char* str, int delim)
+{
+	static char* p;
+	if (str) {
+		p = str;
+	}
+	char* ret = p;
+
+	while (*p && *p != delim) {
+		p++;
+	}
+	if (*p) {
+		*p = 0;
+		p++;
+	} else if (p == ret) {
+		return NULL;
+	}
+
+	return ret;
+}
+
+// like strtok but takes a single character delim and doesn't
+// skip empty fields (ie 2 delims next to each other returns "")
+// and does not modify str but return allocated copies of tokens
+char* mystrtok_alloc(const char* str, int delim)
+{
+	static const char* p;
+	if (str) {
+		p = str;
+	}
+	const char* s = p;
+
+	while (*p && *p != delim) {
+		p++;
+	}
+	char* ret = NULL;
+	if (*p || p != s) {
+		ret = (char*)calloc(p-s+1, 1);
+		memcpy(ret, s, p-s);
+		p += !!*p;  // only ++ if we're not at '\0'
+	}
+
+	return ret;
+}
 
 size_t find(c_array haystack, c_array needle)
 {
