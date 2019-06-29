@@ -28,11 +28,12 @@ solution "CUtils"
 
 		configuration "Debug"
 			defines { "DEBUG" }
-			flags { "Symbols" }
+			symbols "On"
 
 		configuration "Release"
 			defines { "NDEBUG" }
-			flags { "Optimize" }
+			symbols "Off"
+			optimize "On"
 
 		configuration { "linux", "gmake" }
 			buildoptions { "-std=c99", "-pedantic" }
@@ -59,11 +60,12 @@ solution "CUtils"
   
 		configuration "Debug"
 			defines { "DEBUG" }
-			flags { "Symbols" }
+			symbols "On"
  
 		configuration "Release"
 			defines { "NDEBUG" }
-			flags { "Optimize" }
+			symbols "Off"
+			optimize "On"
  
 		configuration { "linux", "gmake" }
 		buildoptions { "-ansi", "-pedantic-errors", "-fno-rtti", "-fno-exceptions", "-fno-strict-aliasing", "-Wunused-variable", "-Wreturn-type" }
