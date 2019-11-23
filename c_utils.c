@@ -8,9 +8,9 @@
 /** Useful utility function since strdup isn't in standard C.*/
 char* mystrdup(const char* str)
 {
-	/* if (!str)
-	 * 	return NULL;
-	 */
+	if (!str)
+		return NULL;
+	
 	size_t len = strlen(str);
 	char* temp = (char*)calloc(len+1, sizeof(char));
 	if (!temp) {
