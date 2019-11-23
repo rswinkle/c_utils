@@ -330,6 +330,7 @@ void cstr_clear(rsw_cstr* str) { str->size = 0; }
 void free_cstr_heap(void* str)
 {
 	rsw_cstr* tmp = (rsw_cstr*)str;
+	if (!tmp) return;
 	free(tmp->a);
 	free(tmp);
 }
