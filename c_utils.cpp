@@ -237,7 +237,7 @@ char* freadstring(FILE* input, int delim, size_t max_len)
 		max_len = 4096;
 	}
 
-	if(!(string = (char*)malloc(max_len+1)))
+	if (!(string = (char*)malloc(max_len+1)))
 		return NULL;
 
 	while (1) {
