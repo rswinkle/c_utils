@@ -251,7 +251,7 @@ char* freadstring(FILE* input, int delim, size_t max_len)
 {
 	char* string = NULL, *tmp_str = NULL;
 	int temp;
-	int i=0;
+	int i = 0;
 	int inf = 0;
 
 	if (feof(input))
@@ -290,6 +290,7 @@ char* freadstring(FILE* input, int delim, size_t max_len)
 					return NULL;
 				}
 				string = tmp_str;
+				max_len *= 2;
 			} else {
 				break;
 			}
