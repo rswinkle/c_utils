@@ -32,7 +32,7 @@ on top of this eventually.
 This is the all in one, cqueue.h file from [CQueue](http://github.com/rswinkle/CQueue)
 
 ### CVector
-This is the all in one, cqueue.h file from [CVueue](http://github.com/rswinkle/CVector)
+This is the all in one, cvector.h file from [CVector](http://github.com/rswinkle/CVector)
 
 They are all written in clean C, ie they compile as C++.  This repository's
 premake only builds and sort of tests c_utils but CQueue and CVector (and thus rsw_cstr
