@@ -10,11 +10,11 @@
 #define RSW_CSTR_ALLOCATOR(x) ((x) * 2)
 
 
-size_t CSTR_ST_SZ = 25;
+cstr_size_t CSTR_ST_SZ = 25;
 
 
-//vector_char* vec_char_heap(size_t size, size_t capacity);
-//vector_char* init_vec_char_heap(char* vals, size_t num);
+//vector_char* vec_char_heap(cstr_size_t size, cstr_size_t capacity);
+//vector_char* init_vec_char_heap(char* vals, cstr_size_t num);
 
 int init_cstr(rsw_cstr* str)
 {
@@ -31,7 +31,7 @@ int init_cstr(rsw_cstr* str)
 	return 1;
 }
 
-int init_cstr_cap(rsw_cstr* str, size_t capacity)
+int init_cstr_cap(rsw_cstr* str, cstr_size_t capacity)
 {
 	str->size = 0;
 	str->capacity = (capacity > 0) ? capacity : CSTR_ST_SZ;
@@ -46,7 +46,7 @@ int init_cstr_cap(rsw_cstr* str, size_t capacity)
 	return 1;
 }
 
-int init_cstr_sz(rsw_cstr* str, size_t size, int val)
+int init_cstr_sz(rsw_cstr* str, cstr_size_t size, int val)
 {
 	str->size = size;
 	str->capacity = size + CSTR_ST_SZ;
@@ -63,7 +63,7 @@ int init_cstr_sz(rsw_cstr* str, size_t size, int val)
 	return 1;
 }
 
-int init_cstr_sz_cap(rsw_cstr* str, size_t size, int val, size_t capacity)
+int init_cstr_sz_cap(rsw_cstr* str, cstr_size_t size, int val, cstr_size_t capacity)
 {
 	str->size = size;
 	str->capacity = (capacity > size) ? capacity : size + CSTR_ST_SZ;
@@ -81,7 +81,7 @@ int init_cstr_sz_cap(rsw_cstr* str, size_t size, int val, size_t capacity)
 }
 
 
-int init_cstr_str(rsw_cstr* str, const char* start, size_t len)
+int init_cstr_str(rsw_cstr* str, const char* start, cstr_size_t len)
 {
 	str->capacity = len + CSTR_ST_SZ;
 	str->size = len;
@@ -115,7 +115,7 @@ void cstr_copy(void* dest, void* src)
 int cstr_push(rsw_cstr* str, char a)
 {
 	char* tmp;
-	size_t tmp_sz;
+	cstr_size_t tmp_sz;
 	if (str->capacity > str->size + 1) {
 		str->a[str->size++] = a;
 		str->a[str->size] = 0;
@@ -143,10 +143,10 @@ char cstr_pop(rsw_cstr* str)
 }
 
 
-int cstr_extend(rsw_cstr* str, size_t num, char a)
+int cstr_extend(rsw_cstr* str, cstr_size_t num, char a)
 {
 	char* tmp;
-	size_t tmp_sz;
+	cstr_size_t tmp_sz;
 	if (str->capacity < str->size + num + 1) {
 		tmp_sz = str->capacity + num + CSTR_ST_SZ;
 		if (!(tmp = (char*)realloc(str->a, sizeof(char)*tmp_sz))) {
@@ -165,10 +165,10 @@ int cstr_extend(rsw_cstr* str, size_t num, char a)
 
 
 //insert will insert at the end (str->size) behaving just like push
-int cstr_insert(rsw_cstr* str, size_t i, char a)
+int cstr_insert(rsw_cstr* str, cstr_size_t i, char a)
 {
 	char* tmp;
-	size_t tmp_sz;
+	cstr_size_t tmp_sz;
 	if (str->capacity > str->size + 1) {
 		memmove(&str->a[i+1], &str->a[i], (str->size-i)*sizeof(char));
 		str->a[i] = a;
@@ -192,10 +192,10 @@ int cstr_insert(rsw_cstr* str, size_t i, char a)
 
 //The insert functions will work inserting at the end ie at str->size
 //in which case they behave just like the concatenate functions
-int cstr_insert_str(rsw_cstr* str, size_t i, const char* a, size_t len)
+int cstr_insert_str(rsw_cstr* str, cstr_size_t i, const char* a, cstr_size_t len)
 {
 	char* tmp;
-	size_t tmp_sz;
+	cstr_size_t tmp_sz;
 	if (str->capacity < str->size + len + 1) {
 		tmp_sz = str->capacity + len + CSTR_ST_SZ;
 		if (!(tmp = (char*)realloc(str->a, sizeof(char)*tmp_sz))) {
@@ -213,11 +213,11 @@ int cstr_insert_str(rsw_cstr* str, size_t i, const char* a, size_t len)
 	return 1;
 }
 
-int cstr_insert_cstr(rsw_cstr* str, size_t i, rsw_cstr* a_str)
+int cstr_insert_cstr(rsw_cstr* str, cstr_size_t i, rsw_cstr* a_str)
 {
 	char* tmp;
-	size_t tmp_sz;
-	size_t len = a_str->size;
+	cstr_size_t tmp_sz;
+	cstr_size_t len = a_str->size;
 	if (str->capacity < str->size + len + 1) {
 		tmp_sz = str->capacity + len + CSTR_ST_SZ;
 		if (!(tmp = (char*)realloc(str->a, sizeof(char)*tmp_sz))) {
@@ -235,10 +235,10 @@ int cstr_insert_cstr(rsw_cstr* str, size_t i, rsw_cstr* a_str)
 	return 1;
 }
 
-int cstr_concatenate(rsw_cstr* str, const char* a, size_t len)
+int cstr_concatenate(rsw_cstr* str, const char* a, cstr_size_t len)
 {
 	char* tmp;
-	size_t tmp_sz;
+	cstr_size_t tmp_sz;
 	if (str->capacity < str->size + len + 1) {
 		tmp_sz = str->capacity + len + CSTR_ST_SZ;
 		if (!(tmp = (char*)realloc(str->a, sizeof(char)*tmp_sz))) {
@@ -261,16 +261,16 @@ int cstr_concatenate_cstr(rsw_cstr* str, rsw_cstr* a_str)
 }
 
 /** Erace characters between start and end inclusive */
-void cstr_erase(rsw_cstr* str, size_t start, size_t end)
+void cstr_erase(rsw_cstr* str, cstr_size_t start, cstr_size_t end)
 {
-	size_t d = end - start + 1;
+	cstr_size_t d = end - start + 1;
 	memmove(&str->a[start], &str->a[end+1], (str->size-1-end)*sizeof(char));
 	str->size -= d;
 	str->a[str->size] = 0;
 }
 
 
-int cstr_reserve(rsw_cstr* str, size_t size)
+int cstr_reserve(rsw_cstr* str, cstr_size_t size)
 {
 	char* tmp;
 	if (str->capacity < size + 1) {
@@ -287,7 +287,7 @@ int cstr_reserve(rsw_cstr* str, size_t size)
 
 
 
-int cstr_set_capacity(rsw_cstr* str, size_t size)
+int cstr_set_capacity(rsw_cstr* str, cstr_size_t size)
 {
 	char* tmp;
 	if (size < str->size) {
@@ -308,7 +308,7 @@ int cstr_set_capacity(rsw_cstr* str, size_t size)
 
 void cstr_set_val_sz(rsw_cstr* str, char val)
 {
-	size_t i;
+	cstr_size_t i;
 	for (i=0; i<str->size; i++) {
 		str->a[i] = val;
 	}
@@ -317,7 +317,7 @@ void cstr_set_val_sz(rsw_cstr* str, char val)
 //not sure when I'd use this
 void cstr_set_val_cap(rsw_cstr* str, char val)
 {
-	size_t i;
+	cstr_size_t i;
 	for (i=0; i<str->capacity-1; i++) {
 		str->a[i] = val;
 	}
@@ -344,10 +344,10 @@ void free_cstr(void* str)
 }
 
 /* Sets a cstr to first num chars in a (clears previous contents) */
-int cstr_set_str(rsw_cstr* str, const char* a, size_t len)
+int cstr_set_str(rsw_cstr* str, const char* a, cstr_size_t len)
 {
 	char* tmp;
-	size_t tmp_sz;
+	cstr_size_t tmp_sz;
 	if (str->capacity < len + 1) {
 		tmp_sz = len + CSTR_ST_SZ;
 		if (!(tmp = (char*)realloc(str->a, sizeof(char)*tmp_sz))) {
@@ -366,7 +366,7 @@ int cstr_set_str(rsw_cstr* str, const char* a, size_t len)
 
 rsw_cstr* cstr_ltrim(rsw_cstr* str)
 {
-	size_t i = 0;
+	cstr_size_t i = 0;
 
 	while (isspace(str->a[i++]));
 
@@ -379,10 +379,10 @@ rsw_cstr* cstr_ltrim(rsw_cstr* str)
 
 rsw_cstr* cstr_rtrim(rsw_cstr* str)
 {
-	size_t i;
+	cstr_size_t i;
 
 	i = str->size - 1;
-	while (i != (size_t)-1 && isspace(str->a[i--]));
+	while (i != (cstr_size_t)-1 && isspace(str->a[i--]));
 
 	str->size = i + 1;
 	str->a[str->size] = 0;
@@ -422,7 +422,7 @@ rsw_cstr slice_cstr(rsw_cstr* str, long start, long end)
 	return str2;
 }
 
-rsw_cstr cstr_substr(rsw_cstr* str, size_t index, size_t len)
+rsw_cstr cstr_substr(rsw_cstr* str, cstr_size_t index, cstr_size_t len)
 {
 	rsw_cstr s;
 
@@ -434,7 +434,7 @@ rsw_cstr cstr_substr(rsw_cstr* str, size_t index, size_t len)
 	return s;
 }
 
-int cstr_resize(rsw_cstr* str, size_t size, int val)
+int cstr_resize(rsw_cstr* str, cstr_size_t size, int val)
 {
 	if (!cstr_reserve(str, size))
 		return 0;
@@ -449,16 +449,16 @@ int cstr_resize(rsw_cstr* str, size_t size, int val)
 
 /* probably just use strstr directly most of the time
  * but I'm trying to parallel C++ std::string functions */
-size_t cstr_find(rsw_cstr* str, rsw_cstr* needle)
+cstr_size_t cstr_find(rsw_cstr* str, rsw_cstr* needle)
 {
 	char* result = strstr(str->a, needle->a);
 	if (result)
 		return result - str->a;
 	else
-		return -1; /* TODO make a macro or static const size_t npos = -1 ? */
+		return -1; /* TODO make a macro or static const cstr_size_t npos = -1 ? */
 }
 
-size_t cstr_find_start_at(rsw_cstr* str, rsw_cstr* needle, size_t start)
+cstr_size_t cstr_find_start_at(rsw_cstr* str, rsw_cstr* needle, cstr_size_t start)
 {
 	if (start >= str->size)
 		return -1;
@@ -467,19 +467,19 @@ size_t cstr_find_start_at(rsw_cstr* str, rsw_cstr* needle, size_t start)
 	if (result)
 		return result - str->a;
 	else
-		return -1; /* TODO make a macro or static const size_t npos = -1 ? */
+		return -1; /* TODO make a macro or static const cstr_size_t npos = -1 ? */
 }
 
-size_t cstr_find_str(rsw_cstr* str, char* needle)
+cstr_size_t cstr_find_str(rsw_cstr* str, char* needle)
 {
 	char* result = strstr(str->a, needle);
 	if (result)
 		return result - str->a;
 	else
-		return -1; /* TODO make a macro or static const size_t npos = -1 ? */
+		return -1; /* TODO make a macro or static const cstr_size_t npos = -1 ? */
 }
 
-size_t cstr_find_str_start_at(rsw_cstr* str, char* needle, size_t start)
+cstr_size_t cstr_find_str_start_at(rsw_cstr* str, char* needle, cstr_size_t start)
 {
 	if (start >= str->size)
 		return -1;
@@ -488,15 +488,15 @@ size_t cstr_find_str_start_at(rsw_cstr* str, char* needle, size_t start)
 	if (result)
 		return result - str->a;
 	else
-		return -1; /* TODO make a macro or static const size_t npos = -1 ? */
+		return -1; /* TODO make a macro or static const cstr_size_t npos = -1 ? */
 }
 
-int cstr_replace(rsw_cstr* str, char* find, char* a, size_t count)
+int cstr_replace(rsw_cstr* str, char* find, char* a, cstr_size_t count)
 {
-	size_t find_len = strlen(find);
-	size_t a_len = strlen(a);
+	cstr_size_t find_len = strlen(find);
+	cstr_size_t a_len = strlen(a);
 	long len_added = a_len - find_len;
-	size_t index;
+	cstr_size_t index;
 
 	if (count == 0)
 		count = -1; /* converted to max value */
@@ -524,19 +524,19 @@ int cstr_replace(rsw_cstr* str, char* find, char* a, size_t count)
 
 //replace up to num characters of str starting at index with all of str2
 //so this can cause the string to grow or shrink or stay the same size
-int cstr_replace_substr_cstr(rsw_cstr* str, size_t index, size_t num, rsw_cstr* str2)
+int cstr_replace_substr_cstr(rsw_cstr* str, cstr_size_t index, cstr_size_t num, rsw_cstr* str2)
 {
 	return cstr_replace_substr(str, index, num, str2->a, str2->size);
 }
 
-int cstr_replace_substr(rsw_cstr* str, size_t index, size_t num, const char* a, size_t len)
+int cstr_replace_substr(rsw_cstr* str, cstr_size_t index, cstr_size_t num, const char* a, cstr_size_t len)
 {
 	if (index >= str->size) {
 		assert(index < str->size);
 		return 0;
 	}
 
-	if (num == (size_t)-1 || index + num > str->size)
+	if (num == (cstr_size_t)-1 || index + num > str->size)
 		num = str->size - index;
 
 	long len_added = len - num;
@@ -555,12 +555,12 @@ int cstr_replace_substr(rsw_cstr* str, size_t index, size_t num, const char* a, 
 	return 1;
 }
 
-int cstr_split(rsw_cstr* str, rsw_cstr* delim, rsw_cstr** results, size_t* num_results)
+int cstr_split(rsw_cstr* str, rsw_cstr* delim, rsw_cstr** results, cstr_size_t* num_results)
 {
 	if (!results || !num_results)
 		return 0;
 
-	size_t num = 0;
+	cstr_size_t num = 0;
 	
 	rsw_cstr* ret, *tmp;
 	if (delim->size == 0) {
@@ -722,7 +722,7 @@ int file_write_cstr(FILE* file, rsw_cstr* str)
 }
 
 
-int file_open_readlines_cstr(const char* filename, rsw_cstr** lines, size_t* num_results)
+int file_open_readlines_cstr(const char* filename, rsw_cstr** lines, cstr_size_t* num_results)
 {
 	rsw_cstr filedata, delim;
 

@@ -215,7 +215,7 @@ int main()
 	init_cstr_str(&delim, "!@#", 3);
 
 	rsw_cstr* cstr_results;
-	size_t num_results;
+	cstr_size_t num_results;
 	cstr_split(&file_str, &delim, &cstr_results, &num_results);
 
 	for (int i=0; i<num_results; ++i)
@@ -256,9 +256,9 @@ int main()
 		return 0;
 	}
 
-	size_t not_found = -1;
-	size_t start_at = 0;
-	size_t result;
+	cstr_size_t not_found = -1;
+	cstr_size_t start_at = 0;
+	cstr_size_t result;
 	rsw_cstr hello_str = { "hello", 5, 6 };
 	while ((result = cstr_find_start_at(&file_str, &hello_str, start_at)) != not_found) {
 		cstr_replace_substr(&file_str, result, 5, "goodbye", 7);

@@ -5,11 +5,11 @@ workspace "CUtils"
 	location "build"
 
 	filter "Debug"
-		defines { "DEBUG", "CUTILS_SIZE_T=long" }
+		defines { "DEBUG", "CUTILS_SIZE_T=long", "RSW_CSTR_SIZE_T=long" }
 		symbols "On"
 
 	filter "Release"
-		defines { "NDEBUG", "CUTILS_SIZE_T=long" }
+		defines { "NDEBUG", "CUTILS_SIZE_T=long", "RSW_CSTR_SIZE_T=long" }
 		optimize "On"
 
 	-- A project defines one build target

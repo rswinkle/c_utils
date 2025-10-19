@@ -46,14 +46,14 @@ endef
 
 ifeq ($(config),debug)
 OBJDIR = obj/Debug/cppdriver
-DEFINES += -DDEBUG -DCUTILS_SIZE_T=long
+DEFINES += -DDEBUG -DCUTILS_SIZE_T=long -DRSW_CSTR_SIZE_T=long
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g -ansi -pedantic-errors -fno-rtti -fno-exceptions -fno-strict-aliasing -Wall -Wextra
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -ansi -pedantic-errors -fno-rtti -fno-exceptions -fno-strict-aliasing -Wall -Wextra
 ALL_LDFLAGS += $(LDFLAGS)
 
 else ifeq ($(config),release)
 OBJDIR = obj/Release/cppdriver
-DEFINES += -DNDEBUG -DCUTILS_SIZE_T=long
+DEFINES += -DNDEBUG -DCUTILS_SIZE_T=long -DRSW_CSTR_SIZE_T=long
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2 -ansi -pedantic-errors -fno-rtti -fno-exceptions -fno-strict-aliasing -Wall -Wextra
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2 -ansi -pedantic-errors -fno-rtti -fno-exceptions -fno-strict-aliasing -Wall -Wextra
 ALL_LDFLAGS += $(LDFLAGS) -s

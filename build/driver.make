@@ -46,14 +46,14 @@ endef
 
 ifeq ($(config),debug)
 OBJDIR = obj/Debug/driver
-DEFINES += -DDEBUG -DCUTILS_SIZE_T=long
+DEFINES += -DDEBUG -DCUTILS_SIZE_T=long -DRSW_CSTR_SIZE_T=long
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g -std=c99 -pedantic -Wall -Wextra
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -std=c99 -pedantic -Wall -Wextra
 ALL_LDFLAGS += $(LDFLAGS)
 
 else ifeq ($(config),release)
 OBJDIR = obj/Release/driver
-DEFINES += -DNDEBUG -DCUTILS_SIZE_T=long
+DEFINES += -DNDEBUG -DCUTILS_SIZE_T=long -DRSW_CSTR_SIZE_T=long
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2 -std=c99 -pedantic -Wall -Wextra
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2 -std=c99 -pedantic -Wall -Wextra
 ALL_LDFLAGS += $(LDFLAGS) -s

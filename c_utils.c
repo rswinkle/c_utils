@@ -638,7 +638,7 @@ char* mystrtok_alloc(const char* str, int delim)
 
 
 /** Searches for needle in haystack returning first result or -1
- *  which, since cu_size_t is unsigned is converted to cu_size_t's max value */
+ *  which, if cu_size_t is unsigned, is converted to cu_size_t's max value */
 cu_size_t find(c_array haystack, c_array needle)
 {
 	byte* result = haystack.data;
