@@ -1,9 +1,16 @@
 
 -- A solution contains projects, and defines the available configurations
-solution "CUtils"
+workspace "CUtils"
 	configurations { "Debug", "Release" }
 	location "build"
- 
+
+	filter "Debug"
+		defines { "DEBUG", "CUTILS_SIZE_T=long" }
+		symbols "On"
+
+	filter "Release"
+		defines { "NDEBUG", "CUTILS_SIZE_T=long" }
+		optimize "On"
 
 	-- A project defines one build target
 	project "driver"
@@ -23,20 +30,11 @@ solution "CUtils"
 --		excludes { "c_utils.*" }
 --		libdirs { "/usr/lib64/" }
 --		includedirs { "./inc" }
-		links { "cunit" } 
+		links { "cunit" }
 		targetdir "build"
 
-		configuration "Debug"
-			defines { "DEBUG" }
-			symbols "On"
-
-		configuration "Release"
-			defines { "NDEBUG" }
-			symbols "Off"
-			optimize "On"
-
-		configuration { "linux", "gmake" }
-			buildoptions { "-std=c99", "-pedantic" }
+		filter { "system:linux", "action:gmake" }
+			buildoptions { "-std=c99", "-pedantic", "-Wall", "-Wextra" }
 
 
 	project "cppdriver"
@@ -58,17 +56,8 @@ solution "CUtils"
  --   links { "c_utils" } 
 	  targetdir "build"
   
-		configuration "Debug"
-			defines { "DEBUG" }
-			symbols "On"
- 
-		configuration "Release"
-			defines { "NDEBUG" }
-			symbols "Off"
-			optimize "On"
- 
-		configuration { "linux", "gmake" }
-		buildoptions { "-ansi", "-pedantic-errors", "-fno-rtti", "-fno-exceptions", "-fno-strict-aliasing", "-Wunused-variable", "-Wreturn-type" }
+		filter { "system:linux", "action:gmake" }
+			buildoptions { "-ansi", "-pedantic-errors", "-fno-rtti", "-fno-exceptions", "-fno-strict-aliasing", "-Wall", "-Wextra" }
 -- "-x c++" //force compiling as C++, ignore extension
 --[[
 	project "c_utils"

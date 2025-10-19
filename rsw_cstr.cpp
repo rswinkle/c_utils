@@ -585,8 +585,8 @@ int cstr_split(rsw_cstr* str, rsw_cstr* delim, rsw_cstr** results, size_t* num_r
 
 		//since there's
 		if (num == cap) {
-			if (!(tmp = (rsw_cstr*) realloc(ret, sizeof(rsw_cstr)*cap*2))) {
-				assert(tmp);
+			tmp = (rsw_cstr*)realloc(ret, sizeof(rsw_cstr)*cap*2);
+			if (!tmp) {
 				free(ret);
 				num = 0;
 				return 0;
@@ -605,7 +605,6 @@ int cstr_split(rsw_cstr* str, rsw_cstr* delim, rsw_cstr** results, size_t* num_r
 	}
 
 	if (!(tmp = (rsw_cstr*) realloc(ret, sizeof(rsw_cstr)*num))) {
-		assert(tmp);
 		free(ret);
 		num = 0;
 		return 0;

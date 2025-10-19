@@ -8,80 +8,83 @@ ifndef verbose
   SILENT = @
 endif
 
-.PHONY: clean prebuild prelink
+.PHONY: clean prebuild
+
+SHELLTYPE := posix
+ifeq ($(shell echo "test"), "test")
+	SHELLTYPE := msdos
+endif
+
+# Configurations
+# #############################################
+
+ifeq ($(origin CC), default)
+  CC = gcc
+endif
+ifeq ($(origin CXX), default)
+  CXX = g++
+endif
+ifeq ($(origin AR), default)
+  AR = ar
+endif
+RESCOMP = windres
+TARGETDIR = .
+TARGET = $(TARGETDIR)/cppdriver
+INCLUDES +=
+FORCE_INCLUDE +=
+ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
+ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
+LIBS +=
+LDDEPS +=
+LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+define PREBUILDCMDS
+endef
+define PRELINKCMDS
+endef
+define POSTBUILDCMDS
+endef
 
 ifeq ($(config),debug)
-  RESCOMP = windres
-  TARGETDIR = .
-  TARGET = $(TARGETDIR)/cppdriver
-  OBJDIR = obj/Debug/cppdriver
-  DEFINES += -DDEBUG
-  INCLUDES +=
-  FORCE_INCLUDE +=
-  ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g -ansi -pedantic-errors -fno-rtti -fno-exceptions -fno-strict-aliasing -Wunused-variable -Wreturn-type
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)
-  ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS +=
-  LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS)
-  LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
-  define PREBUILDCMDS
-  endef
-  define PRELINKCMDS
-  endef
-  define POSTBUILDCMDS
-  endef
-all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)
+OBJDIR = obj/Debug/cppdriver
+DEFINES += -DDEBUG -DCUTILS_SIZE_T=long
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g -ansi -pedantic-errors -fno-rtti -fno-exceptions -fno-strict-aliasing -Wall -Wextra
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -ansi -pedantic-errors -fno-rtti -fno-exceptions -fno-strict-aliasing -Wall -Wextra
+ALL_LDFLAGS += $(LDFLAGS)
+
+else ifeq ($(config),release)
+OBJDIR = obj/Release/cppdriver
+DEFINES += -DNDEBUG -DCUTILS_SIZE_T=long
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2 -ansi -pedantic-errors -fno-rtti -fno-exceptions -fno-strict-aliasing -Wall -Wextra
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2 -ansi -pedantic-errors -fno-rtti -fno-exceptions -fno-strict-aliasing -Wall -Wextra
+ALL_LDFLAGS += $(LDFLAGS) -s
+
+endif
+
+# Per File Configurations
+# #############################################
+
+
+# File sets
+# #############################################
+
+GENERATED :=
+OBJECTS :=
+
+GENERATED += $(OBJDIR)/c_utils.o
+GENERATED += $(OBJDIR)/main.o
+GENERATED += $(OBJDIR)/rsw_cstr.o
+OBJECTS += $(OBJDIR)/c_utils.o
+OBJECTS += $(OBJDIR)/main.o
+OBJECTS += $(OBJDIR)/rsw_cstr.o
+
+# Rules
+# #############################################
+
+all: $(TARGET)
 	@:
 
-endif
-
-ifeq ($(config),release)
-  RESCOMP = windres
-  TARGETDIR = .
-  TARGET = $(TARGETDIR)/cppdriver
-  OBJDIR = obj/Release/cppdriver
-  DEFINES += -DNDEBUG
-  INCLUDES +=
-  FORCE_INCLUDE +=
-  ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2 -ansi -pedantic-errors -fno-rtti -fno-exceptions -fno-strict-aliasing -Wunused-variable -Wreturn-type
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CFLAGS)
-  ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS +=
-  LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS) -s
-  LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
-  define PREBUILDCMDS
-  endef
-  define PRELINKCMDS
-  endef
-  define POSTBUILDCMDS
-  endef
-all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)
-	@:
-
-endif
-
-OBJECTS := \
-	$(OBJDIR)/c_utils.o \
-	$(OBJDIR)/main.o \
-	$(OBJDIR)/rsw_cstr.o \
-
-RESOURCES := \
-
-CUSTOMFILES := \
-
-SHELLTYPE := msdos
-ifeq (,$(ComSpec)$(COMSPEC))
-  SHELLTYPE := posix
-endif
-ifeq (/bin,$(findstring /bin,$(SHELL)))
-  SHELLTYPE := posix
-endif
-
-$(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES)
+$(TARGET): $(GENERATED) $(OBJECTS) $(LDDEPS) | $(TARGETDIR)
+	$(PRELINKCMDS)
 	@echo Linking cppdriver
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
@@ -106,36 +109,47 @@ clean:
 	@echo Cleaning cppdriver
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
+	$(SILENT) rm -rf $(GENERATED)
 	$(SILENT) rm -rf $(OBJDIR)
 else
 	$(SILENT) if exist $(subst /,\\,$(TARGET)) del $(subst /,\\,$(TARGET))
+	$(SILENT) if exist $(subst /,\\,$(GENERATED)) del /s /q $(subst /,\\,$(GENERATED))
 	$(SILENT) if exist $(subst /,\\,$(OBJDIR)) rmdir /s /q $(subst /,\\,$(OBJDIR))
 endif
 
-prebuild:
+prebuild: | $(OBJDIR)
 	$(PREBUILDCMDS)
 
-prelink:
-	$(PRELINKCMDS)
-
 ifneq (,$(PCH))
-$(OBJECTS): $(GCH) $(PCH)
-$(GCH): $(PCH)
+$(OBJECTS): $(GCH) | $(PCH_PLACEHOLDER)
+$(GCH): $(PCH) | prebuild
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) -x c++-header $(ALL_CXXFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
+$(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) touch "$@"
+else
+	$(SILENT) echo $null >> "$@"
+endif
+else
+$(OBJECTS): | prebuild
 endif
 
+
+# File Rules
+# #############################################
+
 $(OBJDIR)/c_utils.o: ../c_utils.cpp
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/main.o: ../main.cpp
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/rsw_cstr.o: ../rsw_cstr.cpp
-	@echo $(notdir $<)
+	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 -include $(OBJECTS:%.o=%.d)
 ifneq (,$(PCH))
-  -include $(OBJDIR)/$(notdir $(PCH)).d
+  -include $(PCH_PLACEHOLDER).d
 endif
