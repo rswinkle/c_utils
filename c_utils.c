@@ -628,7 +628,7 @@ char* mystrtok_alloc(const char* str, int delim)
 	}
 	char* ret = NULL;
 	if (*p || p != s) {
-		ret = calloc(p-s+1, 1);
+		ret = (char*)calloc(p-s+1, 1);
 		memcpy(ret, s, p-s);
 		p += !!*p;  // only ++ if we're not at '\0'
 	}

@@ -735,8 +735,9 @@ int file_open_readlines_cstr(const char* filename, rsw_cstr** lines, cstr_size_t
 	}
 
 	//seems dumb to malloc 2 bytes .. I should make a split function that
-	//only splits on single character delimiters, passed in as a char not a cstr or a char*
-	delim.a = "\n";
+	//only splits on single character delimiters, passed in as a char/int
+	//not a cstr or a char*.  The char* cast is to get rid of C++ warning
+	delim.a = (char*)"\n";
 	delim.size = 1;
 	delim.capacity = 2;
 
