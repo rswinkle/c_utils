@@ -48,7 +48,8 @@ char *int2bin(int a, char *buffer, int buf_size) {
 		a >>= 1;
 	} while (a);
 
-	return memmove(buffer, ++buf, buffer+buf_size-buf);
+	buf++;
+	return memmove(buffer, buf, buffer+buf_size-buf);
 }
 
 void misc_test()
