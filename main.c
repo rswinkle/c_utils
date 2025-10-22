@@ -39,6 +39,19 @@ void file_rw_test()
 
 	free(file_contents.data);
 	free(file_contents2.data);
+
+	c_array lines;
+
+	file_open_readlines("../no_ending_nl.txt", &lines, &file_contents);
+
+	CU_ASSERT_EQUAL(file_contents.len, 71);
+	CU_ASSERT_EQUAL(lines.len, 5);
+
+	CU_ASSERT_STRING_EQUAL(((char**)lines.data)[0], "line 1   aoeuae");
+	CU_ASSERT_STRING_EQUAL(((char**)lines.data)[4], "line 5");
+
+	free(file_contents.data);
+	free(lines.data);
 }
 
 char *int2bin(int a, char *buffer, int buf_size) {
