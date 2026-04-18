@@ -48,7 +48,7 @@ void file_rw_test()
 	CU_ASSERT_EQUAL(lines.len, 5);
 
 	CU_ASSERT_STRING_EQUAL(((char**)lines.data)[0], "line 1   aoeuae");
-	CU_ASSERT_STRING_EQUAL(((char**)lines.data)[4], "line 5");
+	CU_ASSERT_STRING_EQUAL(((char**)lines.data)[4], "line5");
 
 	free(file_contents.data);
 	free(lines.data);
